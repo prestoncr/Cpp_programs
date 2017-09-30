@@ -275,7 +275,7 @@ template <typename X>
    {
      if (array[i] != NULL)
      {
-       stream << "[" << array[i] << "]";
+       stream << "[" << array[i] << "], ";
      }
    }
  }

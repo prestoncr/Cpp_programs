@@ -396,7 +396,7 @@ template <typename X>
    current = head;
    while (current->next != NULL)
      {
-       stream << "[" << current->data << "]";
+       stream << "[" << current->data << "], ";
        current = current->next;
      }
    stream << "[" << current->data << "]";

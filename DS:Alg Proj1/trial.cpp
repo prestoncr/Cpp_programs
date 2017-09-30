@@ -1,36 +1,14 @@
-#include "SDAL.h"
+#include "CDAL.h"
 #include <string>
 
-void print_reversed( char const * string ) {
-  if ( *string ) {
-    print_reversed( string+1 );
-    std::cout << *string;
-  }
-}
 
 int main()
 {
   using namespace cop3530;
 
-// char a = 'A';
-// char c = 'Q';
-// char d = 'Z';
-// char b = 'B';
-char x[] = {'T', 'h', 'e', ' ', 'd', 'o', 'g'};
-//char const* ptr1 = &a;
-//char* const ptr2 = &b;
-
-print_reversed(x);
 
 
-
-
-std:: cout << "Success\n\n";
-
-
-
-
-// SDAL<int> simple;
+  CDAL<int> simple;
 //
 // for (int i = 0; i < 50; i++) simple.push_back(i);
 //
