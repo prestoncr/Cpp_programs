@@ -18,17 +18,58 @@ public class StringSorter
         characters[(int)(content.charAt(i))]++;
     }
 
-    for (int i = 0; i < 256; i++)
+    int userChoice = 0;
+    while (userChoice != 4)
     {
-      if(characters[i] != 0)
-      {
-        System.out.println((char)(i) + " freq: " + characters[i]);
-      }
+        System.out.println("\n\nPlease select the option you would like to see\n");
+        System.out.println("1. Display character frequencys alphabetically");
+        System.out.println("2. Display sorted frequencys");
+        System.out.println("3. Show types of character frequencys");
+        System.out.println("4. Exit");
+        while(true)
+        {
+          try
+          {
+            userChoice = input.nextInt();
+            break;
+          }
+          catch (Exception e)
+          {
+            System.out.println("Error, bad input, please enter a number 1-4\n");
+            input.nextLine();
+          }
+        }
+        if(userChoice == 1)
+        {
+          printAlphabetically(characters);
+        }
+
+        if(userChoice == 2)
+        {
+          theSorter(characters);
+        }
+
+        if(userChoice == 3)
+        {
+          charTypes(characters);
+        }
     }
 
-    theSorter(characters);
+    System.out.println("\nCharacter Sorter Exited Successfully\n\n");
 
+  }// end of Main
+
+public static void printAlphabetically(int[] characterArr)
+{
+  for (int i = 0; i < 256; i++)
+  {
+    if(characterArr[i] != 0)
+    {
+      System.out.println((char)(i) + " freq: " + characterArr[i]);
+    }
   }
+} // end of printAlphabetically
+
   public static void theSorter(int [] originalArray)
   {
 
@@ -50,7 +91,7 @@ public class StringSorter
     {
       if (originalArray[i] > temp)
       {
-        
+
         temp = originalArray[i];
         tmpChar = (char)(i);
         place = i;
@@ -70,5 +111,34 @@ public class StringSorter
       System.out.println(newCharArray[i] + " freq: " + newFreqArray[i]);
     }
   }
-}
-}
+
+}//end of theSorter
+
+public static void charTypes(int [] originalArray)
+{
+int numericals = 0;
+int punctuals = 0;
+int textuals = 0;
+int whiteSpaces = 0;
+char temp;
+
+for (int i = 0; i < 256; i++)
+  {
+    temp = (char)(i);
+    if (Character.isLetter(temp)) textuals += originalArray[i];
+    else if (Character.isDigit(temp)) numericals += originalArray[i];
+    else if (Character.isWhitespace(temp)) whiteSpaces += originalArray[i];
+    else punctuals+= originalArray[i];
+  }
+
+System.out.println("Textual Character count: " + textuals);
+System.out.println("Numerical Character count: " + numericals);
+System.out.println("WhiteSpace Character count: " + whiteSpaces);
+System.out.println("Punctual/Other Character count: " + punctuals);
+
+
+} // end of charTypes
+
+
+
+}// end of Class StringSorter
