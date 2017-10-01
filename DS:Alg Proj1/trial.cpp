@@ -6,34 +6,19 @@ int main()
 {
   using namespace cop3530;
 
-
-
   CDAL<int> simple;
-//
-// for (int i = 0; i < 50; i++) simple.push_back(i);
-//
-//
-// simple.push_back(50);
-// simple.push_back(51);
-//
-//
-// simple.print(std::cout);
-// std:: cout << std:: endl;
-// std:: cout << simple.peek_back() << std:: endl;
 
-// simple.push_front(12);
-// simple.insert(24, 3);
-// simple.replace(25,3);
-// int* arr = simple.contents();
-// simple.print(std::cout);
-// std::cout << "\n\n";
-// std:: cout << *arr << std::endl;
-// arr++;
-// std:: cout << *arr << std::endl;
-// arr++;
-// std:: cout << *arr << std::endl;
-//
-// std::cout << "\n\n";
+  for(int i =0; i < 121; i++)
+  simple.push_back(i);
+  simple.insert(169, 72);
+  simple.push_front(772);
+  simple.remove(30);
+  simple.print(std:: cout);
+  std:: cout << "\n\n" << simple.peek_back() << "\n\n" << simple.peek_front() << "\n";
+
+simple.remove(30);
+
+
 
 
   /*

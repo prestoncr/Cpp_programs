@@ -45,9 +45,8 @@ template <typename X>
    };
 
    node* head;
-   node* tail;
    node* current;
-   node* temp;
+   node* tail;
 
 
    void newArray()
@@ -62,16 +61,11 @@ template <typename X>
 
  template <typename X>
    CDAL<X>::CDAL()
-   
+
    {
      head = NULL;
      tail = NULL;
      current = NULL;
-     temp = NULL;
-    head->previous = NULL;
-    head->next = tail;
-    tail ->next = NULL;
-    tail->previous = head;
    }
 
 
@@ -93,6 +87,7 @@ if (head == NULL)
     foo->next = tail;
     foo->previous = NULL;
     head = foo;
+    tail = head;
     return;
   }
 
@@ -140,6 +135,7 @@ else
       {
         node* foo = new node;
         foo->previous = current;
+        current->next = foo;
         foo->next = NULL;
         current = foo;
         newArray();
@@ -152,6 +148,7 @@ else
       current=current->next;
       while (true)
       {
+        filled = false;
         for (size_t i = 0; i < 50; i++)
         {
           if(current->data[i+1] == NULL)
@@ -186,8 +183,10 @@ else
 
         if (current->next == NULL)
         {
+          std:: cout <<"hey ooo\n\n";
           node* foo = new node;
           foo->previous = current;
+          current->next = foo;
           foo->next = NULL;
           current = foo;
           newArray();
@@ -219,6 +218,7 @@ else
        foo->next = tail;
        foo->previous = NULL;
        head = foo;
+       tail = head;
        return;
      }
      current = tail;
@@ -226,6 +226,7 @@ else
      {
        node* foo = new node;
        foo->previous = current;
+       current->next = foo;
        foo->next = NULL;
        current = foo;
        newArray();
@@ -478,7 +479,7 @@ template <typename X>
  {
    if (is_empty())
    {
-     std:: cout << "Error cannot print an empty list\n";
+     std:: cout << "<empty list>";
       return;
     }
    current = head;
@@ -486,7 +487,7 @@ template <typename X>
    {
      for (size_t i = 0; i < 50; i++)
      {
-       if (current->data[i]!= NULL) stream << "[" << current->data[i] << "], ";
+       if (current->data[i]!= NULL) stream << "[" << current->data[i] << "],";
      }
      if (current->next != NULL) current = current->next;
      else break;
@@ -526,7 +527,7 @@ template <typename X>
  template <typename X>
    CDAL<X>::~CDAL()
     {
-      clear();
+    //  clear();
     }
 
 //===========================================
