@@ -46,7 +46,9 @@ public class StringSorter
 
         if(userChoice == 2)
         {
-          theSorter(characters);
+          int[] tempArray = new int[characters.length];
+          System.arraycopy(characters, 0, tempArray, 0, characters.length);
+          theSorter(tempArray);
         }
 
         if(userChoice == 3)
@@ -72,7 +74,6 @@ public static void printAlphabetically(int[] characterArr)
 
   public static void theSorter(int [] originalArray)
   {
-
     int temp = 0;
     int place = 0;
     char tmpChar;
