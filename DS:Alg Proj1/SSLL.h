@@ -6,12 +6,91 @@
 #define _SSLL_H_
 
 #include "list.h"
+#include <iterator>
  using namespace cop3530;
 namespace cop3530{
 
 
 template <typename X>
   class SSLL : public List<X> {
+
+  private:
+   struct node{
+     X data;
+     node* next;
+   };
+   node* head;
+   node* temp;
+   node* current;
+   node* tail;
+
+
+  public:
+    template <typename dX>
+        class SSLL_Iter
+        {
+
+          // type aliases required for C++ iterator compatibility
+      using size_t = std::size_t;
+      using value_type = dX;
+      using reference = dX&;
+      using pointer = dX*;
+      using difference_type = std::ptrdiff_t;
+      using iterator_category = std::forward_iterator_tag;
+
+
+      // type aliases for prettier code
+      using self_type = SSLL_Iter;
+      using self_reference = SSLL_Iter&;
+
+    private:
+      node* here;
+
+    public:
+      explicit SSLL_Iter( node* start = nullptr ) : here( start ) {}
+      SSLL_Iter( const SSLL_Iter& src ) : here( src.here ) {}
+
+
+      reference operator*() const {
+        return here->data;
+      }
+      pointer operator->() const {
+         return &(operator*());
+      }
+
+      self_reference operator=( SSLL_Iter<dX> const& src ) {
+        if (this == &src) return (*this);
+        here = src.here;
+        return *this;
+      }
+
+      self_reference operator++() {
+        if (here->next != nullptr){ here++;
+        return *this;
+      }
+      here = nullptr;
+      return *this;
+      //temporarily fixed I guess ! :))
+      //has to return end somehow
+      //must fix this to not get Illegal Instruction 4
+      } // preincrement
+
+      self_type operator++(int) {
+        self_type tmp (*this);
+        ++(*this);
+        return tmp;
+      } // postincrement
+
+      bool operator==( SSLL_Iter<dX> const& rhs ) const {
+        return (here->data == rhs.here->data);
+      }
+      bool operator!=( SSLL_Iter<dX> const& rhs) const {
+        return (here != rhs.here);
+      }
+
+    }; // end of SSLL iter class
+
+
 
  public :
   SSLL ();
@@ -36,19 +115,24 @@ template <typename X>
 
   ~SSLL () override;
 
- private:
 
-  struct node{
-    X data;
-    node* next;
-  };
-  node* head;
-  node* temp;
-  node* current;
-  node* tail;
+  using iterator = SSLL_Iter<X>;
+  using const_iterator = SSLL_Iter<X const>;
 
+
+  iterator begin() const {
+    return SSLL_Iter<X>( head );
+  }
+
+
+  iterator end() const {
+    return SSLL_Iter<X>();
+  }
 
  };
+
+
+
 
 //-----------------------------------------------------
 //Constructor
@@ -421,9 +505,9 @@ template <typename X>
      current = head;
      while (current->next != NULL)
        {
-	 itemArr[count] = current->data;
-	 count++;
-	 current = current->next;
+	        itemArr[count] = current->data;
+	         count++;
+	          current = current->next;
        }
      itemArr[count] = current->data;
      X* returnArr = itemArr;
