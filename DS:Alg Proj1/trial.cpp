@@ -1,4 +1,4 @@
-#include "CDAL.h"
+#include "SDAL.h"
 #include <string>
 
 
@@ -6,20 +6,32 @@ int main()
 {
   using namespace cop3530;
 
-  CDAL<int> simple;
-
-  for(int i =0; i < 121; i++)
-  simple.push_back(i);
-  simple.insert(169, 72);
-  simple.push_front(772);
-  simple.remove(30);
+  SDAL<int> simple;
+  std:: cout << "STARTING\n\n";
+  for (int i = 0; i < 5; i++) simple.push_back(i);
+  simple.push_front(22);
+  simple.push_front(12);
   simple.print(std:: cout);
-  std:: cout << "\n\n" << simple.peek_back() << "\n\n" << simple.peek_front() << "\n";
+  std:: cout << std:: endl;
 
-simple.remove(30);
+  SDAL<int>::iterator iter = simple.begin();
+  SDAL<int>::iterator end = simple.end();
 
+      for (; iter!=end; ++iter)
+      {
+        std::cout <<  *iter << std:: endl;
+      }
 
-
+std:: cout << "ENDING\n\n";
+    // std::cout << *iter << std:: endl;
+    // ++iter;
+    // std::cout << *iter << std:: endl;
+    // ++iter;
+    // std::cout << *iter << std:: endl;
+    // ++iter;
+    // std::cout << *iter << std:: endl;
+    // ++iter;
+    // std::cout << *iter << std:: endl;
 
   /*
    void insert (X element, size_t position)override;

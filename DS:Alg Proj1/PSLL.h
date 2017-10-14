@@ -14,6 +14,170 @@ namespace cop3530{
 
 template <typename X>
   class PSLL : public List<X> {
+  private:
+
+   struct node{
+     X data;
+     node* next;
+   };
+
+   node* head;
+   node* temp;
+   node* current;
+   node* tail;
+   node* poolHead;
+   node* poolTail;
+   node* poolCurr;
+   node* poolTemp;
+
+
+  bool freePool()
+  {
+  if(poolHead == NULL) return false;
+  else return true;
+
+  }
+
+  node* findNode()
+  {
+   //this function returns a free node from the pool
+   poolTemp = poolHead;
+   if (poolHead->next != NULL)
+     {
+       poolHead = NULL;
+     }
+
+   else
+     {
+       poolHead = poolHead->next;
+     }
+     return poolTemp;
+  }
+
+  bool memoryWaste()
+  {
+   if(length() >= 100 && (poolLength() > (length()/2)))
+     return true;
+     else return false;
+  }
+  void memorySaver()
+  {
+   poolCurr = poolHead;
+   size_t count = 0;
+   size_t half = poolLength()/2;
+   while (count < half)
+   {
+     poolCurr = poolCurr->next;
+     count++;
+   }
+   while(poolCurr->next != NULL)
+   {
+     node* delNode = poolCurr;
+      poolCurr = poolCurr->next;
+     delete delNode;
+   }
+  }
+  size_t poolLength()
+  {
+   if (poolHead ==NULL) return 0;
+
+   size_t count = 0;
+   poolCurr = poolHead;
+   while (poolCurr->next != NULL)
+     {
+       poolCurr = poolCurr->next;
+       count++;
+     }
+   count++;
+   return count;
+
+  }
+
+  void clearPool()
+  {
+
+      if (poolHead == NULL)
+        {
+          return;
+        }
+
+      poolCurr = poolHead;
+
+      while (poolCurr->next != NULL)
+        {
+           node* delNode = poolCurr;
+            poolCurr = poolCurr->next;
+             delete delNode;
+        }
+
+  }
+public:
+  template <typename dX>
+      class PSLL_Iter
+      {
+
+        // type aliases required for C++ iterator compatibility
+    using size_t = std::size_t;
+    using value_type = dX;
+    using reference = dX&;
+    using pointer = dX*;
+    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::forward_iterator_tag;
+
+
+    // type aliases for prettier code
+    using self_type = PSLL_Iter;
+    using self_reference = PSLL_Iter&;
+
+  private:
+    node* here;
+
+  public:
+    explicit PSLL_Iter( node* start = nullptr ) : here( start ) {}
+    PSLL_Iter( const PSLL_Iter& src ) : here( src.here ) {}
+
+
+    reference operator*() const {
+      return here->data;
+    }
+    pointer operator->() const {
+       return &(operator*());
+    }
+
+    self_reference operator=( PSLL_Iter<dX> const& src ) {
+      if (this == &src) return (*this);
+      here = src.here;
+      return *this;
+    }
+
+    self_reference operator++() {
+      if (here->next != nullptr){ here++;
+      return *this;
+    }
+    here = nullptr;
+    return *this;
+    //temporarily fixed I guess ! :))
+    //has to return end somehow
+    //must fix this to not get Illegal Instruction 4
+    } // preincrement
+
+    self_type operator++(int) {
+      self_type tmp (*this);
+      ++(*this);
+      return tmp;
+    } // postincrement
+
+    bool operator==( PSLL_Iter<dX> const& rhs ) const {
+      return (here == rhs.here);
+    }
+    bool operator!=( PSLL_Iter<dX> const& rhs) const {
+      return (here != rhs.here);
+    }
+
+  }; // end of PSLL iter class
+
+
+
 
  public :
   PSLL ();
@@ -38,105 +202,22 @@ template <typename X>
 
   ~PSLL () override;
 
- private:
-
-  struct node{
-    X data;
-    node* next;
-  };
-
-  node* head;
-  node* temp;
-  node* current;
-  node* tail;
-  node* poolHead;
-  node* poolTail;
-  node* poolCurr;
-  node* poolTemp;
+  using iterator = PSLL_Iter<X>;
+  using const_iterator = PSLL_Iter<X const>;
 
 
-bool freePool()
-{
-if(poolHead == NULL) return false;
- else return true;
-
-}
-
-node* findNode()
-{
-  //this function returns a free node from the pool
-  poolTemp = poolHead;
-  if (poolHead->next != NULL)
-    {
-      poolHead = NULL;
-    }
-
-  else
-    {
-      poolHead = poolHead->next;
-    }
-    return poolTemp;
-}
-
-bool memoryWaste()
-{
-  if(length() >= 100 && (poolLength() > (length()/2)))
-    return true;
-    else return false;
-}
-void memorySaver()
-{
-  poolCurr = poolHead;
-  size_t count = 0;
-  size_t half = poolLength()/2;
-  while (count < half)
-  {
-    poolCurr = poolCurr->next;
-    count++;
+  iterator begin() const {
+    return PSLL_Iter<X>( head );
   }
-  while(poolCurr->next != NULL)
-  {
-    node* delNode = poolCurr;
-     poolCurr = poolCurr->next;
-    delete delNode;
+
+
+  iterator end() const {
+    return PSLL_Iter<X>();
   }
-}
-size_t poolLength()
-{
-  if (poolHead ==NULL) return 0;
-
-  size_t count = 0;
-  poolCurr = poolHead;
-  while (poolCurr->next != NULL)
-    {
-      poolCurr = poolCurr->next;
-      count++;
-    }
-  count++;
-  return count;
-
-}
-
-void clearPool()
-{
-
-     if (poolHead == NULL)
-       {
-         return;
-       }
-
-     poolCurr = poolHead;
-
-     while (poolCurr->next != NULL)
-       {
-          node* delNode = poolCurr;
-           poolCurr = poolCurr->next;
-            delete delNode;
-       }
-
- }
 
  };
+
+  };
 
 //-----------------------------------------------------
 //Constructor
@@ -587,5 +668,5 @@ template <typename X>
 
 //=======================================
 //END OF PSLL.h
-}
+
 #endif

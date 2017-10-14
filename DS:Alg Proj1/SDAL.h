@@ -13,6 +13,103 @@ namespace cop3530{
 template <typename X>
   class SDAL : public List<X> {
 
+  private:
+
+    size_t arr_size;
+    X *array;
+    X *newArray;
+
+    void makeArray(size_t size)
+    {
+      this->array = new X [size];
+      for (int i = 0; i < size; i++) array[i] = NULL;
+    }
+    void resizeArray()
+    {
+      size_t size = arr_size*(1.5);
+
+      this->newArray = new X [size];
+      for (int i = 0; i < size; i++) newArray[i] = NULL;
+
+      for (int i = 0; i < arr_size; i++)
+      {
+        this->newArray[i] = this->array[i];
+      }
+      this->array = this->newArray;
+      arr_size = arr_size*(1.5);
+      std:: cout <<"THE ARRAY HAS BEEN RESIZED\n\n";
+    }
+
+
+
+public:
+  template <typename dX>
+      class SDAL_Iter
+      {
+
+        // type aliases required for C++ iterator compatibility
+    using size_t = std::size_t;
+    using value_type = dX;
+    using reference = dX&;
+    using pointer = dX*;
+    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::forward_iterator_tag;
+
+
+    // type aliases for prettier code
+    using self_type = SDAL_Iter;
+    using self_reference = SDAL_Iter&;
+
+  private:
+    size_t here;
+     dX *array;
+
+  public:
+    explicit SDAL_Iter( size_t start = NULL, dX *a = NULL  )
+    : here( start ), array (a)  {}
+    SDAL_Iter( const SDAL_Iter& src, dX *a = NULL )
+     : here( src.here ) , array (a) {}
+
+
+    reference operator*() const {
+      return array[here];
+    }
+    pointer operator->() const {
+       return &(operator*());
+    }
+
+    self_reference operator=( SDAL_Iter<dX> const& src ) {
+      if (this == &src) return (*this);
+      here = src.here;
+      return *this;
+    }
+
+    self_reference operator++() {
+      if (array[here] != NULL){ here++;
+      return *this;
+    }
+    here = NULL;
+    return *this;
+    //temporarily fixed I guess ! :))
+    //has to return end somehow
+    //must fix this to not get Illegal Instruction 4
+    } // preincrement
+
+    self_type operator++(int) {
+      self_type tmp (*this);
+      ++(*this);
+      return tmp;
+    } // postincrement
+
+    bool operator==( SDAL_Iter<dX> const& rhs ) const {
+      return (this->array[here] == this->array[rhs.here]);
+    }
+    bool operator!=( SDAL_Iter<dX> const& rhs) const {
+      return (here != rhs.here);
+    }
+
+  }; // end of SDAL iter class
+
  public :
   SDAL (size_t start_size);
   SDAL();
@@ -37,33 +134,18 @@ template <typename X>
 
   ~SDAL () override;
 
- private:
+  using iterator = SDAL_Iter<X>;
+  using const_iterator = SDAL_Iter<X const>;
 
-   size_t arr_size;
-   X *array;
-   X *newArray;
 
-   void makeArray(size_t size)
-   {
-     this->array = new X [size];
-     for (int i = 0; i < size; i++) array[i] = NULL;
-   }
-   void resizeArray()
-   {
-     size_t size = arr_size*(1.5);
+  iterator begin()  {
+    return SDAL_Iter<X>( 0, this->array );
+  }
 
-     this->newArray = new X [size];
-     for (int i = 0; i < size; i++) newArray[i] = NULL;
 
-     for (int i = 0; i < arr_size; i++)
-     {
-       this->newArray[i] = this->array[i];
-     }
-     this->array = this->newArray;
-     arr_size = arr_size*(1.5);
-     std:: cout <<"THE ARRAY HAS BEEN RESIZED\n\n";
-   }
-
+  iterator end()  {
+    return SDAL_Iter<X>(this->length(), this->array);
+  }
 
  };
 
@@ -192,7 +274,6 @@ X SDAL<X>::  item_at (size_t position)
 {
 return array[position];
 }
-
 
  //-----------------------------------------
 //peek_back

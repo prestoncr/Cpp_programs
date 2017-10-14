@@ -82,7 +82,7 @@ template <typename X>
       } // postincrement
 
       bool operator==( SSLL_Iter<dX> const& rhs ) const {
-        return (here->data == rhs.here->data);
+        return (here == rhs.here);
       }
       bool operator!=( SSLL_Iter<dX> const& rhs) const {
         return (here != rhs.here);
