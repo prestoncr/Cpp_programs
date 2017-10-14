@@ -1,4 +1,4 @@
-#include "SDAL.h"
+#include "CDAL.h"
 #include <string>
 
 
@@ -6,16 +6,14 @@ int main()
 {
   using namespace cop3530;
 
-  SDAL<int> simple;
+  CDAL<int> simple;
   std:: cout << "STARTING\n\n";
-  for (int i = 0; i < 5; i++) simple.push_back(i);
-  simple.push_front(22);
-  simple.push_front(12);
+  for (int i = 0; i < 142; i++) simple.push_back(i);
   simple.print(std:: cout);
   std:: cout << std:: endl;
 
-  SDAL<int>::iterator iter = simple.begin();
-  SDAL<int>::iterator end = simple.end();
+  CDAL<int>::iterator iter = simple.begin();
+  CDAL<int>::iterator end = simple.end();
 
       for (; iter!=end; ++iter)
       {

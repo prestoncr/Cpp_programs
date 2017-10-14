@@ -13,6 +13,100 @@ namespace cop3530{
 template <typename X>
   class CDAL : public List<X> {
 
+  private:
+
+    struct node
+    {
+      X data[50];
+      node* next;
+      node* previous;
+    };
+
+    node* head;
+    node* current;
+    node* tail;
+
+
+    void newArray()
+    {
+      for (size_t i = 0; i < 50; i++)
+      current->data[i] = NULL;
+    }
+
+  public:
+    template <typename dX>
+        class CDAL_Iter
+        {
+
+          // type aliases required for C++ iterator compatibility
+      using size_t = std::size_t;
+      using value_type = dX;
+      using reference = dX&;
+      using pointer = dX*;
+      using difference_type = std::ptrdiff_t;
+      using iterator_category = std::forward_iterator_tag;
+
+
+      // type aliases for prettier code
+      using self_type = CDAL_Iter;
+      using self_reference = CDAL_Iter&;
+
+    private:
+      node* here;
+      size_t index;
+
+
+    public:
+      explicit CDAL_Iter( node* h = NULL, size_t ind = 0  )
+      : here( h ), index (ind)  {}
+      CDAL_Iter( const CDAL_Iter& src )
+       : here( src.here ) {}
+
+
+      reference operator*() const {
+        return here->data[index];
+      }
+      pointer operator->() const {
+         return &(operator*());
+      }
+
+      self_reference operator=( CDAL_Iter<dX> const& src ) {
+        if (this == &src) return (*this);
+        here = src.here;
+        return *this;
+      }
+
+      self_reference operator++() {
+        ++index;
+        if (index == 50 && here->next)
+        {
+          here = here->next;
+          index = 0;
+        }
+        return *this;
+      } // preincrement
+
+      self_type operator++(int) {
+        self_type tmp (*this);
+        ++(*this);
+        return tmp;
+      } // postincrement
+
+      bool operator==( CDAL_Iter<dX> const& rhs ) const {
+      bool result = false;
+      if (here == rhs.here)
+        if (index == rhs.index) result = true;
+      return result;
+      }
+      bool operator!=( CDAL_Iter<dX> const& rhs) const {
+          bool result = true;
+        if (here == rhs.here)
+          if (index == rhs.index) result = false;
+        return result;
+      }
+
+    }; // end of CDAL iter class
+
  public :
   CDAL();
   void insert (X element, size_t position)override;
@@ -35,25 +129,24 @@ template <typename X>
 
   ~CDAL () override;
 
- private:
-
-   struct node
-   {
-     X data[50];
-     node* next;
-     node* previous;
-   };
-
-   node* head;
-   node* current;
-   node* tail;
+  using iterator = CDAL_Iter<X>;
+  using const_iterator = CDAL_Iter<X const>;
 
 
-   void newArray()
-   {
-     for (size_t i = 0; i < 50; i++)
-     current->data[i] = NULL;
-   }
+  iterator begin()  {
+    return CDAL_Iter<X>( head, 0 );
+  }
+
+
+  iterator end()  {
+    current = tail;
+    size_t count = 0;
+    for (size_t i = 0; i < 50; i++)
+      if (current->data[i]) count++;
+    return CDAL_Iter<X>(tail, count);
+  }
+
+
  };
 
 //-----------------------------------------------------
@@ -531,7 +624,7 @@ template <typename X>
     }
 
 //===========================================
-//END OF SDAL.h
+//END OF CDAL.h
 }
 
 #endif

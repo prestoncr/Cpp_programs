@@ -102,7 +102,7 @@ public:
     } // postincrement
 
     bool operator==( SDAL_Iter<dX> const& rhs ) const {
-      return (this->array[here] == this->array[rhs.here]);
+      return (here == rhs.here);
     }
     bool operator!=( SDAL_Iter<dX> const& rhs) const {
       return (here != rhs.here);
