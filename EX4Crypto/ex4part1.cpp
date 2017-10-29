@@ -1,4 +1,4 @@
-//EX4 Crypto Fall17 Dr.Richard Newman
+//EX4 Crypto Part 1 Fall17 Dr.Richard Newman
 //Designed by Preston Programming
 #include <iostream>
 #include <bitset>
