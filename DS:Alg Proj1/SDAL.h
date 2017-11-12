@@ -37,7 +37,7 @@ template <typename X>
       }
       this->array = this->newArray;
       arr_size = arr_size*(1.5);
-      std:: cout <<"THE ARRAY HAS BEEN RESIZED\n\n";
+
     }
 
 
@@ -173,8 +173,6 @@ public:
    void SDAL<X> :: insert(X ele, size_t position)
 {
   if (is_full()) resizeArray(); //recopy array
-
-
 
      for (int i = length(); i > position; i--)
       {

@@ -108,7 +108,7 @@ template <typename X>
   bool is_full()override;
   size_t length()override;
   void clear()override;
-  bool contains(X element, bool contains)override;
+  bool contains(X element, bool func(X, X))override;
   void print (std::ostream& stream)override;
   X* contents()override;
 
@@ -459,10 +459,19 @@ template <typename X>
 //---------------------------------------------
 // contains
  template<typename X>
-   bool SSLL<X>::  contains(X element, bool contains)
+   bool SSLL<X>::  contains(X element, bool contains(X,X))
    {
-     //Needs to be coded
-     return false;
+     bool final = false;
+
+     current = head;
+     while (current->next != tail)
+     {
+       if (contains(element, current->data)) final = true;
+       current = current ->next;
+     }
+      if (contains(element, tail->data)) final = true;
+
+     return final;
    }
 
 

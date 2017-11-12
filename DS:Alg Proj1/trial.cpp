@@ -1,35 +1,49 @@
-#include "CDAL.h"
+#include "CBL.h"
 #include <string>
 
+bool contains (int x, int y)
+{
+  if (x == y) return true;
+  return false;
+}
 
 int main()
 {
   using namespace cop3530;
 
-  CDAL<int> simple;
+  CBL<int> simple;
   std:: cout << "STARTING\n\n";
-  for (int i = 0; i < 142; i++) simple.push_back(i);
-  simple.print(std:: cout);
-  std:: cout << std:: endl;
 
-  CDAL<int>::iterator iter = simple.begin();
-  CDAL<int>::iterator end = simple.end();
 
-      for (; iter!=end; ++iter)
+    for (int i = 21; i < 30; i++)
       {
-        std::cout <<  *iter << std:: endl;
+        simple.push_back(i);
       }
 
-std:: cout << "ENDING\n\n";
-    // std::cout << *iter << std:: endl;
-    // ++iter;
-    // std::cout << *iter << std:: endl;
-    // ++iter;
-    // std::cout << *iter << std:: endl;
-    // ++iter;
-    // std::cout << *iter << std:: endl;
-    // ++iter;
-    // std::cout << *iter << std:: endl;
+      for (int i = 20; i >=0; i--)
+        {
+          simple.push_front(i);
+        }
+
+      simple.insert(69, 15);
+      std:: cout << "Peek front " << simple.peek_front() << std:: endl;
+      std:: cout << "Peek back " << simple.peek_back() << std:: endl;  
+
+
+
+
+
+  CBL<int>::iterator iter = simple.begin();
+  CBL<int>::iterator end = simple.end();
+
+
+  while (iter != end)
+  {
+    std::cout << *iter << std:: endl;
+    ++iter;
+  }
+
+    std:: cout << "ENDING\n\n";
 
   /*
    void insert (X element, size_t position)override;
