@@ -29,7 +29,7 @@ template <typename X>
   virtual bool is_full() = 0;
   virtual size_t length() = 0;
   virtual void clear() = 0;
-  virtual bool contains(X element, bool func(X, X)) = 0;
+  virtual bool contains(X element, std::function<bool (X,X)> contains) = 0;
   virtual void print (std:: ostream& stream) = 0 ;
   virtual X* contents() = 0;
 

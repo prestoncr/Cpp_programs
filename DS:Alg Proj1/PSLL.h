@@ -109,7 +109,7 @@ template <typename X>
             poolCurr = poolCurr->next;
              delete delNode;
         }
-
+        poolHead = NULL;
   }
 public:
   template <typename dX>
@@ -151,14 +151,12 @@ public:
     }
 
     self_reference operator++() {
-      if (here->next != nullptr){ here++;
+      if (here->next != nullptr){ here = here->next;
       return *this;
     }
     here = nullptr;
     return *this;
-    //temporarily fixed I guess ! :))
-    //has to return end somehow
-    //must fix this to not get Illegal Instruction 4
+
     } // preincrement
 
     self_type operator++(int) {
@@ -195,7 +193,7 @@ public:
   bool is_full()override;
   size_t length()override;
   void clear()override;
-  bool contains(X element, bool contains)override;
+  bool contains(X element, std::function<bool (X,X)> contains)override;
   void print (std::ostream& stream)override;
   X* contents()override;
 
@@ -236,54 +234,35 @@ public:
  }
 
 
- //TESTING only
-
- //TESTING POOL BELOW
- // template <typename X>
- // void PSLL<X>:: printPool (std::ostream& stream)
- // {
- // if (poolHead == NULL)
- //   {
- //     stream << "<empty pool>";
- //     return;
- //   }
- // poolCurr = poolHead;
- // while (poolCurr->next != NULL)
- //   {
- //     stream << "[" << poolCurr->data << "]";
- //     poolCurr = poolCurr->next;
- //   }
- // stream << "[" << poolCurr->data << "]";
- // stream << "[" << poolCurr->next->data << "]";
- // }
 
  //-----------------------------------------------------
 //insert
  template <typename X>
    void PSLL<X> :: insert(X ele, size_t position)
    {
-     node* foo;
-     size_t count = 0;
-     if(freePool())
-     {
-       //use node in free pool
-       //set foo to a node in the Pool
-       foo = findNode();
-     }
-     else
-     {
-        foo = new node;
-     }
 
-     foo-> data = ele;
 
       if (position == 0)
        {
 	        push_front (ele);
        }
 
+       else if (position == length()) push_back(ele);
+
       else if (head != NULL)
        {
+         node* foo;
+         size_t count = 0;
+         if(freePool())
+         {
+           foo = findNode();
+         }
+         else
+         {
+            foo = new node;
+         }
+
+         foo-> data = ele;
 	        current = head;
           while (current->next != NULL && count != position)
           {
@@ -331,8 +310,12 @@ public:
            current ->next = foo;
          }
 
-         else head = foo;
-       tail = foo;
+         else
+         {
+           head = foo;
+           head->next = tail;
+          }
+          tail = foo;
      }
 
    //-----------------------------------------------------
@@ -340,24 +323,23 @@ public:
      template <typename X>
        void PSLL<X> :: push_front(X ele)
        {
-         node* foo;
-         if(freePool()) foo = findNode();
-         else foo = new node;
-
-         foo->data = ele;
-         foo->next = NULL;
 
          if (head != NULL)
            {
+             node* foo;
+             if(freePool()) foo = findNode();
+             else foo = new node;
+
+             foo->data = ele;
+             foo->next = NULL;
+
     	        foo->next = head;
     	        head = foo;
            }
 
          else
            {
-    	        head = foo;
-    	        tail = foo;
-    	        foo ->next = tail;
+    	        push_back(ele);
            }
 
        }
@@ -393,10 +375,32 @@ public:
       template<typename X>
         X PSLL<X>:: remove (size_t position)
            {
+
+
              size_t count = 0;
              X tempDat = NULL;
+             if (position == 0)
+             {
 
-      if (head != NULL)
+               tempDat = head->data;
+               current = head;
+               if (poolHead == NULL) poolHead = current;
+               else
+                 {
+
+                 poolCurr = poolHead;
+                 while (poolCurr->next != NULL)
+                   {
+                     poolCurr = poolCurr->next;
+                   }
+                   poolCurr = current;
+                 }
+
+                   head = head->next;
+               return tempDat;
+             }
+
+      else if (head != NULL)
       {
         	current = head;
           while (current->next != NULL && count != position)
@@ -556,16 +560,16 @@ public:
    template <typename X>
      size_t PSLL<X>:: length()
      {
-       if (head ==NULL) return 0;
+       if (head == NULL) return 0;
 
        size_t count = 0;
        current = head;
        while (current->next != NULL)
          {
-  	 current = current->next;
-  	 count++;
+  	        current = current->next;
+  	         count++;
          }
-
+         count++;
        return count;
      }
 
@@ -591,16 +595,26 @@ template <typename X>
      }
      node* delNode = tail;
      delete delNode;
+     head = NULL;
      clearPool();
  }
 
  //---------------------------------------------
  // contains
   template<typename X>
-    bool PSLL<X>::  contains(X element, bool contains)
+    bool PSLL<X>::  contains(X element, std::function<bool (X,X)> contains)
     {
-      //Needs to be coded
-      return false;
+      bool final = false;
+
+      current = head;
+      while (current->next != NULL)
+      {
+        if (contains(element, current->data)) final = true;
+        current = current ->next;
+      }
+       if (contains(element, tail->data)) final = true;
+
+      return final;
     }
 
 //---------------------------------------------
@@ -638,22 +652,18 @@ template <typename X>
  	 return NULL;
         }
 
-      X itemArr[length()];
+       X* itemArr = new X[length()];
       current = head;
       while (current->next != NULL)
         {
- 	 itemArr[count] = current->data;
- 	 count++;
- 	 current = current->next;
+ 	        itemArr[count] = current->data;
+ 	        count++;
+ 	        current = current->next;
         }
       itemArr[count] = current->data;
-      X* returnArr = itemArr;
 
-      //only works by assigning each data into an array
-      //then printing the array
-      //cannot just print *data
 
-      return returnArr;
+      return itemArr;
     }
 
   //-------------------------------

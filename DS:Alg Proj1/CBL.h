@@ -76,7 +76,7 @@ public:
      size_t a_size;
 
   public:
-    explicit CBL_Iter( size_t start = NULL, dX *a = NULL, size_t x = NULL  )
+    explicit CBL_Iter( size_t start = 0, dX *a = NULL, size_t x = 0  )
     : here( start ), array (a), a_size (x) {}
     CBL_Iter( const CBL_Iter& src, dX *a = NULL )
      : here( src.here ) , array (a) {}
@@ -137,7 +137,7 @@ public:
   bool is_full()override;
   size_t length()override;
   void clear()override;
-  bool contains(X element, bool func(X, X))override;
+  bool contains(X element, std::function<bool (X,X)> contains)override;
   void print (std::ostream& stream)override;
   X* contents()override;
 
@@ -405,20 +405,23 @@ template <typename X>
   void CBL<X>:: clear()
   {
     delete array;
+    makeArray(arr_size);
+    head = 0;
+    tail = 0;
   }
 
 
 //---------------------------------------------
 // contains
  template<typename X>
-   bool CBL<X>::  contains(X element, bool contains(X,X))
+   bool CBL<X>::  contains(X element, std::function<bool (X,X)> contains)
    {
      bool final = false;
      size_t curr = head;
 
      while (curr != tail)
      {
-       if (curr == arr_size) curr == 0;
+       if (curr == arr_size) curr = 0;
        if (contains(element, array[curr])) final = true;
        curr++;
      }
@@ -451,14 +454,25 @@ template <typename X>
  template <typename X>
    X* CBL<X>:: contents()
    {
-     return array;
+     X* newArray = new X[length()];;
+     size_t curr = head;
+     size_t counter = 0;
+     while (curr != tail)
+     {
+       newArray[counter] = array[curr];
+       if (curr+1 == arr_size) curr = -1;
+       curr++;
+       counter++;
+     }
+
+     return newArray;
    }
  //-------------------------------
  //Destructor
  template <typename X>
    CBL<X>::~CBL()
     {
-      clear();
+      delete array;
     }
 
 //===========================================

@@ -18,6 +18,29 @@ template <typename X>
     size_t arr_size;
     X *array;
     X *newArray;
+    size_t og_size;
+    size_t tail = 0;
+
+    bool is_small()
+    {
+      if (arr_size >= 2*og_size  &&  length() < 0.5*arr_size) return true;
+      else return false;
+    }
+
+    void downsize()
+    {
+      size_t size = arr_size*(0.75);
+      this->newArray = new X [size];
+      for (int i = 0; i < size; i++) newArray[i] = NULL;
+
+      for (int i = 0; i < arr_size; i++)
+      {
+        this->newArray[i] = this->array[i];
+      }
+      this->array = this->newArray;
+      arr_size = arr_size*(0.75);
+
+    }
 
     void makeArray(size_t size)
     {
@@ -65,7 +88,7 @@ public:
      dX *array;
 
   public:
-    explicit SDAL_Iter( size_t start = NULL, dX *a = NULL  )
+    explicit SDAL_Iter( size_t start = 0, dX *a = NULL  )
     : here( start ), array (a)  {}
     SDAL_Iter( const SDAL_Iter& src, dX *a = NULL )
      : here( src.here ) , array (a) {}
@@ -127,7 +150,7 @@ public:
   bool is_full()override;
   size_t length()override;
   void clear()override;
-  bool contains(X element, bool contains)override;
+  bool contains(X element, std::function<bool (X,X)> contains)override;
   void print (std::ostream& stream)override;
   X* contents()override;
 
@@ -156,6 +179,7 @@ public:
    SDAL<X>::SDAL()
    :arr_size(50)
    {
+     og_size = 50;
      makeArray(arr_size);
    }
 
@@ -163,6 +187,7 @@ public:
    SDAL<X>::SDAL(size_t size)
    :arr_size (size)
    {
+     og_size = size;
      makeArray (arr_size);
     }
 
@@ -179,7 +204,7 @@ public:
         array[i] = array[i-1];
       }
       array[position] = ele;
-
+      tail++;
 }
 
 
@@ -192,6 +217,7 @@ public:
    {
      if (is_full())resizeArray(); // recopy array
       array[length()] = ele;
+      tail++;
    }
 
 
@@ -208,7 +234,7 @@ public:
            array[i] = array[i-1];
          }
          array[0] = ele;
-
+         tail++;
 }
 
  //-----------------------------------------------------
@@ -234,7 +260,9 @@ template<typename X>
        array[i] = array[i+1];
      }
      array[length()-1] = NULL;
+     tail--;
      return tempDat;
+
    }
 
 //-----------------------------------------------------
@@ -245,7 +273,9 @@ template<typename X>
    {
      X tempDat = array[length()-1];
      array[length() -1] = NULL;
+     tail--;
      return tempDat;
+
    }
 
 
@@ -261,6 +291,7 @@ template<typename X>
        array[i] = array[i+1];
      }
      array[length()-1] = NULL;
+     tail--;
     return tempDat;
    }
 
@@ -315,12 +346,8 @@ template <typename X>
  template <typename X>
    size_t SDAL<X>:: length()
    {
-     size_t count = 0;
-     for (int i =0; i < arr_size; i++)
-     {
-       if(array[i] != NULL) count++;
-     }
-     return count;
+
+     return tail;
    }
 
  //-----------------------------------------
@@ -329,16 +356,27 @@ template <typename X>
   void SDAL<X>:: clear()
   {
     delete array;
+    makeArray(arr_size);
+    tail = 0;
+
   }
 
 
 //---------------------------------------------
 // contains
  template<typename X>
-   bool SDAL<X>::  contains(X element, bool contains)
+   bool SDAL<X>::  contains(X element, std::function<bool (X,X)> contains)
    {
-     //needs to be coded;
-     return true;
+    if (is_empty()) return false;
+
+     for (int i = 0; i < arr_size; i++)
+     {
+       if (array[i] != NULL)
+       {
+         if (contains(element, array[i])) return true;
+       }
+     }
+     return false;
    }
 
 
@@ -365,14 +403,17 @@ template <typename X>
  template <typename X>
    X* SDAL<X>:: contents()
    {
-     return array;
+      X* itemArr = new X[length()];
+      itemArr = array;
+     return itemArr;
    }
  //-------------------------------
  //Destructor
  template <typename X>
    SDAL<X>::~SDAL()
     {
-      clear();
+      delete array;
+
     }
 
 //===========================================

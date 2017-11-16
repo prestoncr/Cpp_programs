@@ -65,14 +65,12 @@ template <typename X>
       }
 
       self_reference operator++() {
-        if (here->next != nullptr){ here++;
+        if (here->next != NULL){ here = here->next;
         return *this;
       }
       here = nullptr;
       return *this;
-      //temporarily fixed I guess ! :))
-      //has to return end somehow
-      //must fix this to not get Illegal Instruction 4
+
       } // preincrement
 
       self_type operator++(int) {
@@ -94,6 +92,7 @@ template <typename X>
 
  public :
   SSLL ();
+  SSLL(const SSLL<X> &list2);
   void insert (X element, size_t position)override;
   void push_back (X element)override;
   void push_front (X element)override;
@@ -108,7 +107,7 @@ template <typename X>
   bool is_full()override;
   size_t length()override;
   void clear()override;
-  bool contains(X element, bool func(X, X))override;
+  bool contains(X element, std::function<bool (X,X)> contains)override;
   void print (std::ostream& stream)override;
   X* contents()override;
 
@@ -126,7 +125,7 @@ template <typename X>
 
 
   iterator end() const {
-    return SSLL_Iter<X>();
+    return SSLL_Iter<X>( tail );
   }
 
  };
@@ -146,31 +145,46 @@ template <typename X>
 
  }
 
+//-----------------------------------------------------
+//Copy Constructor
+template <typename X>
+  SSLL<X>::SSLL(const SSLL<X> &list2){
+    head = list2.head;
+    tail = list2.tail;
+    temp = NULL;
+    current = NULL;
+  }
+
+
 
 //-----------------------------------------------------
 //insert
  template <typename X>
    void SSLL<X> :: insert(X ele, size_t position)
    {
-     size_t count = 0;
-     node* foo = new node;
-     foo-> data = ele;
+
 
       if (position == 0)
        {
-	 push_front (ele);
+	        push_front (ele);
        }
+
+       else if (position == length()) push_back(ele);
+
 
       else if (head != NULL)
        {
-	 current = head;
+         size_t count = 0;
+         node* foo = new node;
+         foo-> data = ele;
+	        current = head;
 
 
      while (current->next != NULL && count != position)
        {
-	 temp = current;
-	 current = current->next;
-	 count++;
+	        temp = current;
+	         current = current->next;
+	          count++;
        }
         temp->next = foo;
         foo->next = current;
@@ -178,7 +192,7 @@ template <typename X>
 
     else
       {
-	std:: cout <<"Error occurred trying to INSERT\n\n";
+	       std:: cout <<"Error occurred trying to INSERT\n\n";
       }
 
 
@@ -199,15 +213,21 @@ template <typename X>
 
        if (head != NULL)
 	 {
+
 	   current = head;
 	   while (current->next != NULL)
 	     {
+
 	       current = current->next;
 	     }
 	   current ->next = foo;
 	 }
 
-       else head = foo;
+       else
+       {
+          head = foo;
+          head -> next = tail;
+       }
      tail = foo;
 
    }
@@ -219,21 +239,20 @@ template <typename X>
  template <typename X>
    void SSLL<X> :: push_front(X ele)
    {
-      node* foo = new node;
-     foo->data = ele;
-     foo->next = NULL;
+
 
      if (head != NULL)
        {
+         node* foo = new node;
+        foo->data = ele;
 	        foo->next = head;
 	         head = foo;
        }
 
      else
        {
-	        head = foo;
-	         tail = foo;
-	          foo ->next = tail;
+	       push_back(ele);
+
        }
 
    }
@@ -278,19 +297,32 @@ template<typename X>
    {
      size_t count =0;
      X tempDat = NULL;
+     if (position == 0)
+     {
+       tempDat = head->data;
+       node* delPtr = head;
+       head= head->next;
+       delete delPtr;
+       return tempDat;
 
-     if (head != NULL)
+     }
+
+
+      else if (head != NULL)
        {
 	 current = head;
 
         while (current->next != NULL && count != position)
          {
-	   temp = current;
-	   current = current->next;
-	   count++;
+	          temp = current;
+	           current = current->next;
+	            count++;
          }
-	tempDat = current->data;
-	temp->next = current->next;
+	        tempDat = current->data;
+          node* delPtr = current;
+          current = temp;
+          delete delPtr;
+	         temp->next = current->next;
 
        }
      else std:: cout << "Error, could not REMOVE\n\n";
@@ -319,7 +351,10 @@ template<typename X>
 
 
 	 tempDat = tail->data;
-	  tail = current;
+   node* delPtr = tail;
+   tail = current;
+   delete delPtr;
+
 
 
        }
@@ -340,7 +375,9 @@ template<typename X>
      if (head != NULL)
        {
 	 tempDat = head->data;
+   node* delPtr = head;
 	 head = head->next;
+   delete delPtr;
 
        }
 
@@ -423,8 +460,8 @@ template <typename X>
      current = head;
      while (current->next != NULL)
        {
-	 current = current->next;
-	 count++;
+	        current = current->next;
+	         count++;
        }
      count++;
      return count;
@@ -443,6 +480,7 @@ template <typename X>
         return;
       }
 
+
     current = head;
 
     while (current->next != tail)
@@ -453,25 +491,27 @@ template <typename X>
       }
       node* delNode = tail;
       delete delNode;
+      head = NULL;
   }
 
 
 //---------------------------------------------
 // contains
  template<typename X>
-   bool SSLL<X>::  contains(X element, bool contains(X,X))
+   bool SSLL<X>::  contains(X element, std::function<bool (X,X)> contains)
    {
      bool final = false;
 
      current = head;
-     while (current->next != tail)
+     while (current->next != NULL)
      {
+
        if (contains(element, current->data)) final = true;
        current = current ->next;
      }
       if (contains(element, tail->data)) final = true;
 
-     return final;
+      return final;
    }
 
 
@@ -510,7 +550,7 @@ template <typename X>
 	 return NULL;
        }
 
-     X itemArr[length()];
+     X* itemArr = new X[length()];
      current = head;
      while (current->next != NULL)
        {
@@ -519,13 +559,8 @@ template <typename X>
 	          current = current->next;
        }
      itemArr[count] = current->data;
-     X* returnArr = itemArr;
 
-     //only works by assigning each data into an array
-     //then printing the array
-     //cannot just print *data
-
-     return returnArr;
+     return itemArr;
 
 
    }
@@ -535,6 +570,7 @@ template <typename X>
    SSLL<X>::~SSLL()
     {
        if(head != NULL) clear();
+
     }
 
 //===========================================

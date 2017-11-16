@@ -22,10 +22,10 @@ template <typename X>
       node* previous;
     };
 
-    node* head;
+    node* headNode;
     node* current;
-    node* tail;
-
+    node* tailNode;
+    size_t tail = 0;
 
     void newArray()
     {
@@ -123,7 +123,7 @@ template <typename X>
   bool is_full()override;
   size_t length()override;
   void clear()override;
-  bool contains(X element, bool contains)override;
+  bool contains(X element, std::function<bool (X,X)> contains)override;
   void print (std::ostream& stream)override;
   X* contents()override;
 
@@ -134,16 +134,16 @@ template <typename X>
 
 
   iterator begin()  {
-    return CDAL_Iter<X>( head, 0 );
+    return CDAL_Iter<X>( headNode, 0 );
   }
 
 
   iterator end()  {
-    current = tail;
+    current = tailNode;
     size_t count = 0;
     for (size_t i = 0; i < 50; i++)
       if (current->data[i]) count++;
-    return CDAL_Iter<X>(tail, count);
+    return CDAL_Iter<X>(tailNode, count);
   }
 
 
@@ -156,8 +156,8 @@ template <typename X>
    CDAL<X>::CDAL()
 
    {
-     head = NULL;
-     tail = NULL;
+     headNode = NULL;
+     tailNode = NULL;
      current = NULL;
    }
 
@@ -167,22 +167,27 @@ template <typename X>
  template <typename X>
    void CDAL<X> :: insert(X ele, size_t position)
 {
-//if position is = head call pushfront then return
-//if position is = tail call pushback then return
+
+    print(std::cout);
+    std:: cout <<"\n\n";
 
 //if list does not exist
-if (head == NULL)
+if (headNode == NULL)
   {
     node* foo = new node;
     current = foo;
     newArray();
     foo->data[0] = ele;
-    foo->next = tail;
+    foo->next = tailNode;
     foo->previous = NULL;
-    head = foo;
-    tail = head;
+    headNode = foo;
+    tailNode = headNode;
+    tail++;
+    std:: cout << "here\n\n";
+    print(std:: cout);
     return;
   }
+
 
 else
   {
@@ -191,12 +196,18 @@ else
     bool filled = false;
     size_t nextFree = 0;
     size_t nodeNum = position/50;
-    current = head;
+    current = headNode;
     for (size_t i = 0; i < nodeNum; i++)
       current = current ->next;
       nodeNum = position%50;
       for (size_t i = 0; i < 50; i++)
       {
+        if (current->data[i+1] == NULL && length() < 50 && position >= tail)
+        {
+            current->data[i+1] = ele;
+            tail++;
+            return;
+        }
         if(current->data[i+1] == NULL)
         {
           tempEle1 = current->data[i];
@@ -221,6 +232,7 @@ else
       {
         //test to see if this is redundant
         current->data[nextFree] = tempEle1;
+        tail++;
         return;
       }
 
@@ -233,7 +245,8 @@ else
         current = foo;
         newArray();
         foo->data[0] = tempEle1;
-        tail = foo;
+        tailNode = foo;
+        tail++;
         return;
       }
 
@@ -265,6 +278,7 @@ else
           }
           current->data[0] = tempEle1;
           current->data[nextFree] = tempEle2;
+          tail++;
           return;
         }
         for (size_t i = 49; i > 0; i--)
@@ -284,7 +298,8 @@ else
           current = foo;
           newArray();
           foo->data[0] = tempEle1;
-          tail = foo;
+          tailNode = foo;
+          tail++;
           return;
         }
         current = current->next;
@@ -302,19 +317,20 @@ else
  template <typename X>
    void CDAL<X> :: push_back(X ele)
    {
-     if (head == NULL)
+     if (headNode == NULL)
      {
        node* foo = new node;
        current = foo;
        newArray();
        foo->data[0] = ele;
-       foo->next = tail;
+       foo->next = tailNode;
        foo->previous = NULL;
-       head = foo;
-       tail = head;
+       headNode = foo;
+       tailNode = headNode;
+         tail++;
        return;
      }
-     current = tail;
+     current = tailNode;
      if (current->data[49] != NULL)
      {
        node* foo = new node;
@@ -324,7 +340,8 @@ else
        current = foo;
        newArray();
        foo->data[0] = ele;
-       tail = foo;
+       tailNode = foo;
+         tail++;
        return;
 
      }
@@ -336,7 +353,7 @@ else
          break;
        }
      }
-
+       tail++;
    } // end of push back
 
 
@@ -355,12 +372,12 @@ template<typename X>
   X CDAL<X> :: replace(X ele, size_t position)
   {
     X tempEle;
-    if (head==NULL)
+    if (headNode==NULL)
     {
         std:: cout << "Error, cannot replace, list is empty\n";
         return NULL;
     }
-    current = head;
+    current = headNode;
     size_t nodeNum = position/50;
     for(size_t i = 0; i < nodeNum; i++)
       current = current->next;
@@ -375,7 +392,7 @@ template<typename X>
  template<typename X>
    X CDAL<X>:: remove (size_t position)
    {
-     if (head == NULL)
+     if (headNode == NULL)
      {
        std:: cout << "Error cannot remove from an empty list\n";
        return NULL;
@@ -383,7 +400,7 @@ template<typename X>
 
      X returnEle;
      size_t nodeNum = position/50;
-     current = head;
+     current = headNode;
      for (size_t i =0; i < nodeNum; i++) current = current->next;
      nodeNum = position%50;
      returnEle = current->data[nodeNum];
@@ -393,7 +410,11 @@ template<typename X>
        current->data[i] = current->data[i+1];
      }
 
-        if (current->next == NULL) return returnEle;
+        if (current->next == NULL)
+        {
+          tail--;
+          return returnEle;
+        }
         current = current->next;
      while(true)
      {
@@ -402,7 +423,11 @@ template<typename X>
        {
          current->data[i] = current->data[i+1];
        }
-       if (current->next == NULL) return returnEle;
+       if (current->next == NULL)
+       {
+         tail--;
+          return returnEle;
+        }
        current = current->next;
      }
 
@@ -416,12 +441,12 @@ template<typename X>
  template<typename X>
    X CDAL<X>::pop_back()
    {
-     if (head == NULL)
+     if (headNode == NULL)
      {
        std:: cout << "Error cannot pop, empty list\n";
        return NULL;
      }
-     current = tail;
+     current = tailNode;
      X tempEle;
      for (size_t i = 0; i < 49; i++)
      {
@@ -432,6 +457,7 @@ template<typename X>
          break;
        }
      }
+     tail--;
      return tempEle;
    }
 
@@ -451,13 +477,13 @@ template<typename X>
 template<typename X>
 X CDAL<X>::  item_at (size_t position)
 {
-  if (head == NULL)
+  if (headNode == NULL)
   {
     std:: cout << "Error cannot get item in empty list\n";
     return NULL;
   }
   size_t nodeNum = position/50;
-  current = head;
+  current = headNode;
   for (size_t i =0; i < nodeNum; i++) current = current->next;
   nodeNum = position%50;
   return current->data[nodeNum];
@@ -469,13 +495,13 @@ X CDAL<X>::  item_at (size_t position)
  template <typename X>
    X CDAL<X>:: peek_back()
    {
-     if (head == NULL)
+     if (headNode == NULL)
      {
        std:: cout << "Error cannot peek, empty list\n";
        return NULL;
      }
 
-    current = tail;
+    current = tailNode;
     for (size_t i = 0; i < 50; i++)
     {
       if (current->data[i] == NULL)
@@ -491,12 +517,12 @@ X CDAL<X>::  item_at (size_t position)
  template <typename X>
    X CDAL<X>:: peek_front()
    {
-     if (head == NULL)
+     if (headNode == NULL)
      {
        std:: cout << "Error cannot peek, empty list";
        return NULL;
      }
-     return head->data[0];
+     return headNode->data[0];
    }
 
 
@@ -505,8 +531,7 @@ X CDAL<X>::  item_at (size_t position)
 template <typename X>
   bool CDAL<X>::is_empty()
   {
-    if (head == NULL) return true;
-    else if (head->data[0] == NULL) return true;
+    if (headNode == NULL) return true;
     else return false;
   }
 
@@ -525,17 +550,7 @@ template <typename X>
  template <typename X>
    size_t CDAL<X>:: length()
    {
-     if (is_empty()) return 0;
-     size_t len = 0;
-     current = head;
-    while (true)
-    {
-      for (size_t i = 0; i < 50; i++)
-              if(current->data[i] != NULL) len++;
-      if (current->next!= NULL) current = current->next;
-      else break;
-    }
-    return len;
+     return tail;
    }
 
  //-----------------------------------------
@@ -543,7 +558,7 @@ template <typename X>
 template <typename X>
   void CDAL<X>:: clear()
   {
-    current = head;
+    current = headNode;
     while (true)
     {
       node* delPtr = current;
@@ -552,15 +567,29 @@ template <typename X>
       else break;
     }
 
+    tail = 0;
+    headNode = NULL;
   }
 
 
 //---------------------------------------------
 // contains
  template<typename X>
-   bool CDAL<X>::  contains(X element, bool contains)
+   bool CDAL<X>::  contains(X element, std::function<bool (X,X)> contains)
    {
-     //needs to be coded
+     if (is_empty()) return false;
+     while(true)
+     {
+       for (size_t i = 0; i < 50; i++)
+       {
+         if (current->data[i]!= NULL)
+         {
+           if (contains(element, current->data[i])) return true;
+         }
+       }
+       if (current->next != NULL) current = current->next;
+       else break;
+     }
      return false;
    }
 
@@ -575,16 +604,22 @@ template <typename X>
      std:: cout << "<empty list>";
       return;
     }
-   current = head;
-   while (true)
+   current = headNode;
+
+   size_t count = 0;
+   size_t index = 0;
+   while (count < tail)
    {
-     for (size_t i = 0; i < 50; i++)
+     if (index == 50)
      {
-       if (current->data[i]!= NULL) stream << "[" << current->data[i] << "],";
+       current = current->next;
+       index = 0;
      }
-     if (current->next != NULL) current = current->next;
-     else break;
+     stream << "[" << current->data[index] << "],";
+     index++;
+     count++;
    }
+
  }
 
 //---------------------------------------------
@@ -597,7 +632,7 @@ template <typename X>
        std:: cout << "Error, empty list\n";
        return NULL;
      }
-     X tmpArr[length()];
+      X* tmpArr = new X[length()];
      size_t nextele = 0;
      while(true)
      {

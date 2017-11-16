@@ -1,4 +1,4 @@
-#include "CBL.h"
+#include "SSLL.h"
 #include <string>
 
 bool contains (int x, int y)
@@ -11,30 +11,41 @@ int main()
 {
   using namespace cop3530;
 
-  CBL<int> simple;
-  std:: cout << "STARTING\n\n";
+  SSLL<int> simple;
+// cop3530::List<char> *list = new cop3530::SSLL<char>();
+// std:: cout << "here1\n";
+//
+// list->insert('A', 0);
+// std:: cout << "here2\n";
+//   list->insert('B', 1);
+//   std:: cout << "here3\n";
+//   list->push_back('C');
+//   std:: cout << "here4\n";
+//   list->push_front('D');
+//   std:: cout << "here5\n";
+//   list->print(std::cout);
+
+simple.insert(69, 0);
+std:: cout << "here4\n";
+
+simple.insert(-5, 1);
+  std:: cout << "\n\n\nSTARTING\n\n";
 
 
-    for (int i = 21; i < 30; i++)
+    for (int i = 0; i < 30; i++)
       {
         simple.push_back(i);
       }
 
-      for (int i = 20; i >=0; i--)
-        {
-          simple.push_front(i);
-        }
 
-      simple.insert(69, 15);
+
+      simple.insert(323, 15);
       std:: cout << "Peek front " << simple.peek_front() << std:: endl;
-      std:: cout << "Peek back " << simple.peek_back() << std:: endl;  
+      std:: cout << "Peek back " << simple.peek_back() << std:: endl;
 
 
-
-
-
-  CBL<int>::iterator iter = simple.begin();
-  CBL<int>::iterator end = simple.end();
+  SSLL<int>::iterator iter = simple.begin();
+  SSLL<int>::iterator end = simple.end();
 
 
   while (iter != end)
@@ -42,8 +53,20 @@ int main()
     std::cout << *iter << std:: endl;
     ++iter;
   }
+  std::cout << *iter << std:: endl;
+
+
+    //SSLL<int> complex = simple;
+    complex.~SSLL();
+
+    std:: cout << "Peek front " << complex.peek_front() << std:: endl;
+    std:: cout << "Peek back " << complex.peek_back() << std:: endl;
+
+    simple.print(std::cout);
+
 
     std:: cout << "ENDING\n\n";
+
 
   /*
    void insert (X element, size_t position)override;
