@@ -5,7 +5,7 @@
 #ifndef _CDAL_H_
 #define _CDAL_H_
 
-#include "list.h"
+#include "List.h"
  using namespace cop3530;
 namespace cop3530{
 
@@ -168,8 +168,7 @@ template <typename X>
    void CDAL<X> :: insert(X ele, size_t position)
 {
 
-    print(std::cout);
-    std:: cout <<"\n\n";
+
 
 //if list does not exist
 if (headNode == NULL)
@@ -183,8 +182,6 @@ if (headNode == NULL)
     headNode = foo;
     tailNode = headNode;
     tail++;
-    std:: cout << "here\n\n";
-    print(std:: cout);
     return;
   }
 
@@ -501,14 +498,19 @@ X CDAL<X>::  item_at (size_t position)
        return NULL;
      }
 
-    current = tailNode;
-    for (size_t i = 0; i < 50; i++)
-    {
-      if (current->data[i] == NULL)
-      {
-        return current->data[i-1];
-      }
-    }
+     size_t count = 0;
+     size_t index = 0;
+     while (count < tail)
+     {
+       if (index == 50)
+       {
+         current = current->next;
+         index = 0;
+       }
+       index++;
+       count++;
+     }
+     return current->data[index-1];
 
    }
 
@@ -608,17 +610,19 @@ template <typename X>
 
    size_t count = 0;
    size_t index = 0;
-   while (count < tail)
+   stream << "[";
+   while (count < tail-1)
    {
      if (index == 50)
      {
        current = current->next;
        index = 0;
      }
-     stream << "[" << current->data[index] << "],";
+     stream << current->data[index] << ",";
      index++;
      count++;
    }
+   stream << current->data[index] << "]"; 
 
  }
 

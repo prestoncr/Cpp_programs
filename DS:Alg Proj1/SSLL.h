@@ -5,7 +5,7 @@
 #ifndef _SSLL_H_
 #define _SSLL_H_
 
-#include "list.h"
+#include "List.h"
 #include <iterator>
  using namespace cop3530;
 namespace cop3530{
@@ -436,6 +436,7 @@ template <typename X>
   bool SSLL<X>::is_empty()
   {
     if (head!=NULL) return false;
+    else return true;
   }
 
 
@@ -527,12 +528,13 @@ template <typename X>
        return;
      }
    current = head;
+   stream << "[";
    while (current->next != NULL)
      {
-       stream << "[" << current->data << "],";
+       stream  << current->data << ",";
        current = current->next;
      }
-   stream << "[" << current->data << "]";
+   stream << current->data << "]";
 
 
  }

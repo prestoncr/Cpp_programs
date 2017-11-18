@@ -5,7 +5,7 @@
 #ifndef _PSLL_H
 #define _PSLL_H
 
-#include "list.h"
+#include "List.h"
 
 using namespace cop3530;
 
@@ -42,7 +42,7 @@ template <typename X>
   {
    //this function returns a free node from the pool
    poolTemp = poolHead;
-   if (poolHead->next != NULL)
+   if (poolHead->next == NULL)
      {
        poolHead = NULL;
      }
@@ -109,7 +109,7 @@ template <typename X>
             poolCurr = poolCurr->next;
              delete delNode;
         }
-        poolHead = NULL;
+
   }
 public:
   template <typename dX>
@@ -331,10 +331,11 @@ public:
              else foo = new node;
 
              foo->data = ele;
-             foo->next = NULL;
 
     	        foo->next = head;
+
     	        head = foo;
+
            }
 
          else
@@ -376,7 +377,6 @@ public:
         X PSLL<X>:: remove (size_t position)
            {
 
-
              size_t count = 0;
              X tempDat = NULL;
              if (position == 0)
@@ -384,19 +384,19 @@ public:
 
                tempDat = head->data;
                current = head;
-               if (poolHead == NULL) poolHead = current;
+               if (poolHead == NULL)
+               {
+                 temp = current->next;
+                poolHead = current;
+                poolHead ->next = NULL;
+               }
                else
                  {
-
-                 poolCurr = poolHead;
-                 while (poolCurr->next != NULL)
-                   {
-                     poolCurr = poolCurr->next;
-                   }
-                   poolCurr = current;
+                   temp = current->next;
+                   current->next = poolHead;
+                   poolHead = current;
                  }
-
-                   head = head->next;
+                   head = temp;
                return tempDat;
              }
 
@@ -416,19 +416,16 @@ public:
           if (poolHead == NULL) poolHead = current;
           else
             {
-            poolCurr = poolHead;
-            while (poolCurr->next != NULL)
-              {
-                poolCurr = poolCurr->next;
-              }
-              poolCurr = current;
-            }
+            current->next = poolHead;
+            poolHead = current;
 
+            }
           }
              else std:: cout << "Error, could not REMOVE\n\n";
              return tempDat;
 
            }
+
 
 
 //-----------------------------------------------------
@@ -448,17 +445,18 @@ public:
 
            	tempDat = tail->data;
 
-            if (poolHead == NULL) poolHead = tail;
+            if (poolHead == NULL)
+            {
+               poolHead = tail;
+               poolHead->next = NULL;
+            }
             else
               {
-              poolCurr = poolHead;
-              while (poolCurr->next != NULL)
-                {
-                  poolCurr = poolCurr->next;
-                }
-                poolCurr = tail;
+                tail->next = poolHead;
+                poolHead = tail;
               }
            	tail = current;
+            tail->next = NULL;
 
         }
           else std:: cout << "Error, could not POP_BACK\n\n";
@@ -477,17 +475,18 @@ public:
             {
               tempDat = head->data;
 
-              if (poolHead == NULL) poolHead = head;
+              if (poolHead == NULL)
+              {
+                poolHead = head;
+                poolHead->next = NULL;
+              }
               else
                 {
-                poolCurr = poolHead;
-                while (poolCurr->next != NULL)
-                  {
-                    poolCurr = poolCurr->next;
-                  }
-                  poolCurr = head;
+                  temp = current->next;
+                  head->next = poolHead;
+                  poolHead = head;
                 }
-              head = head->next;
+              head = temp;
             }
 
           else std:: cout << "Error, could not POP_FRONT\n\n";
@@ -543,6 +542,7 @@ public:
   bool PSLL<X>::is_empty()
   {
     if (head!=NULL) return false;
+    else return true;
   }
 
 
@@ -551,7 +551,7 @@ public:
  template <typename X>
    bool PSLL<X>:: is_full()
    {
-     //Linked List cannot be full?
+     // List cannot be full?
      return false;
    }
 
@@ -629,13 +629,14 @@ template <typename X>
        return;
      }
    current = head;
-   while (current->next != tail)
+   stream << "[";
+   while (current->next != NULL)
      {
-       stream << "[" << current->data << "],";
+       stream  << current->data << ",";
        current = current->next;
      }
-   stream << "[" << current->data << "], ";
-   stream << "[" << current->next->data << "]";
+   stream << current->data << "]";
+
 
  }
 

@@ -5,7 +5,7 @@
 #ifndef _CBL_H_
 #define _CBL_H_
 
-#include "list.h"
+#include "List.h"
  using namespace cop3530;
 namespace cop3530{
 
@@ -439,12 +439,14 @@ template <typename X>
    else
    {
      size_t curr = head;
-     while (curr != tail)
+     stream << "[";
+     while (curr != tail-1)
      {
-       stream << "[" << array[curr] << "],";
+       stream << array[curr] << ",";
        if (curr+1 == arr_size) curr = -1;
        curr++;
      }
+     stream << array[tail-1] << "]";
 
    }
 }

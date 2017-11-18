@@ -5,7 +5,7 @@
 #ifndef _SDAL_H_
 #define _SDAL_H_
 
-#include "list.h"
+#include "List.h"
  using namespace cop3530;
 namespace cop3530{
 
@@ -385,17 +385,20 @@ template <typename X>
  template <typename X>
  void SDAL<X>:: print (std::ostream& stream)
  {
-   if (is_empty()) stream << "<empty list>";
-   else
+   if (is_empty())
    {
-   for (int i = 0; i < arr_size; i++)
+    stream << "<empty list>";
+    return;
+    }
+  size_t count = 0;
+  stream << "[";
+   while (count < tail-1)
    {
-     if (array[i] != NULL)
-     {
-       stream << "[" << array[i] << "],";
-     }
+     stream << array[count] << ",";
+     count++;
    }
- }
+   stream << array[tail-1] << "]";
+
 }
 
 //---------------------------------------------
