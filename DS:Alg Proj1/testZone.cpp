@@ -1,3 +1,4 @@
+#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
 #include "PSLL.h"
@@ -15,7 +16,7 @@ SCENARIO ("General List Testing")
     //Replace the List Implementation Type to any of the five
     //and everything will work exactly the same
 
-		cop3530::List<char> * list  = new cop3530::PSLL<char>();
+		cop3530::List<char> * list  = new cop3530::SDAL<char>();
 
     list->push_back('A');
     list->push_back('B');
@@ -28,14 +29,14 @@ SCENARIO ("General List Testing")
     list->insert('Q', 0);
     list->insert('&', 5);
 
-    std:: cout << "\n===========================================\n";
+    std:: cout << "\n===========================================\n"
       << "Printing the List\nList should be: \n"
       << "[Q,W,X,Y,Z,&,A,B,C,D]" << "\nList actually is:\n";
       list->print(std::cout);
       std:: cout << "\n===========================================\n";
 
 
-		WHEN ("Removing some elements at 0, last, and middle\nusing list->remove(list->length()-1)for last element")
+		WHEN ("Removing some elements at 0, last, and middle using list->remove(list->length()-1)for last element")
      {
 			char first = list->remove(0);
       char last = list->remove(list->length()-1);
@@ -50,12 +51,15 @@ SCENARIO ("General List Testing")
       }
       THEN ("Mid char should be &")
       {
-        REQUIRE(last == '&');
+        REQUIRE(mid == '&');
       }
 		}
 
 		WHEN ("Popping some elements; then checking length again")
     {
+      std:: cout << "List currently is \n";
+      list->print(std::cout);
+      std:: cout << "\n\n";
 			char poppyFront = list->pop_front();
       char poppyBack = list->pop_back();
       THEN ("Front char should be W")
@@ -67,7 +71,7 @@ SCENARIO ("General List Testing")
         REQUIRE(poppyBack == 'C');
       }
       size_t len = list->length();
-      THEN ("Length should be 5\nbecause we have removed thrice and popped twice")
+      THEN ("Length should be 5 because we have removed thrice and popped twice")
       {
         REQUIRE(len == 5);
       }
@@ -85,7 +89,7 @@ SCENARIO ("General List Testing")
       }
     }
 
-    std:: cout << "\n===========================================\n";
+    std:: cout << "\n===========================================\n"
       << "Printing the List again\nList should be: \n"
       << "[X,Y,Z,A,B]" << "\nList actually is:\n";
       list->print(std::cout);
@@ -162,10 +166,10 @@ SCENARIO ("General List Testing")
 
 
 
-SCENARIO ("Large List Testing\nMaking sure growth and shrinkage of List works") {
+SCENARIO ("Large List Testing Making sure growth and shrinkage of List works") {
 	GIVEN ("Int list") {
 
-		cop3530::List<int> * list = new cop3530::PSLL<int>();
+		cop3530::List<int> * list = new cop3530::SDAL<int>();
 
 
 		for(int i = 0; i < 142; i++)
@@ -178,19 +182,30 @@ SCENARIO ("Large List Testing\nMaking sure growth and shrinkage of List works") 
 				REQUIRE(len == 142);
 			}
 		}
-		WHEN ("Peek front is called") {
-			int front = list->peek_front();
-
-			THEN ("Item at the front should be 9") {
-				REQUIRE(front == 9);
-			}
-		}
-		WHEN ("Peek back is called") {
-			int back = list->peek_back();
-			THEN ("Item at the back should be 0") {
-				REQUIRE(back == 0);
-			}
-		}
+		WHEN("Removing a middle element of the list, then checking the contents to make sure the hole was patched")
+    {
+      int x = list->remove(65);
+      THEN("Element x should be 65")
+      {
+        REQUIRE(x == 65);
+      }
+        int * array = list->contents();
+        THEN ("Array items should be [0 - 141], without 65")
+        {
+          char checker[list->length()];
+          int x = 0;
+          for (int i = 0; i < list->length(); i++)
+          {
+            if (x == 65)x++;
+            checker[i] =x;
+            x++;
+          }
+          for(int i = 0; i < list->length(); i++)
+           {
+            REQUIRE(*(array+i) == checker[i]);
+           }
+        }
+      }
 
 		delete list;
 	}

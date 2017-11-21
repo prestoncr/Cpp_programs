@@ -342,14 +342,8 @@ else
        return;
 
      }
-     for (size_t i = 0; i < 50; i++)
-     {
-       if (current->data[i] == NULL)
-       {
-         current->data[i]  = ele;
-         break;
-       }
-     }
+     size_t spot = tail%50;
+     current->data[spot] = ele;
        tail++;
    } // end of push back
 
@@ -401,6 +395,7 @@ template<typename X>
      for (size_t i =0; i < nodeNum; i++) current = current->next;
      nodeNum = position%50;
      returnEle = current->data[nodeNum];
+
 
      for (size_t i = nodeNum; i < 49; i++)
      {
@@ -465,7 +460,7 @@ template<typename X>
  template<typename X>
    X CDAL<X>:: pop_front()
    {
-     remove(0);
+     return remove(0);
    }
 
 //-----------------------------------------
@@ -622,7 +617,7 @@ template <typename X>
      index++;
      count++;
    }
-   stream << current->data[index] << "]"; 
+   stream << current->data[index] << "]";
 
  }
 
@@ -638,15 +633,16 @@ template <typename X>
      }
       X* tmpArr = new X[length()];
      size_t nextele = 0;
+     current = headNode;
+     size_t count = 0;
      while(true)
      {
        for (size_t i = 0; i < 50; i++)
        {
-         if (current->data[i]!= NULL)
-         {
            tmpArr[nextele] = current->data[i];
            nextele++;
-         }
+           count++;
+           if (count == tail) return tmpArr;
        }
        if (current->next != NULL) current = current->next;
        else break;

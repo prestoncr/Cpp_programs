@@ -33,7 +33,7 @@ template <typename X>
 
   bool freePool()
   {
-  if(poolHead == NULL) return false;
+  if(poolHead == nullptr) return false;
   else return true;
 
   }
@@ -42,16 +42,8 @@ template <typename X>
   {
    //this function returns a free node from the pool
    poolTemp = poolHead;
-   if (poolHead->next == NULL)
-     {
-       poolHead = NULL;
-     }
-
-   else
-     {
-       poolHead = poolHead->next;
-     }
-     return poolTemp;
+   poolHead = poolHead->next;
+   return poolTemp;
   }
 
   bool memoryWaste()
@@ -70,20 +62,22 @@ template <typename X>
      poolCurr = poolCurr->next;
      count++;
    }
-   while(poolCurr->next != NULL)
+   poolTemp = poolCurr;
+   while(poolCurr->next != nullptr)
    {
      node* delNode = poolCurr;
       poolCurr = poolCurr->next;
      delete delNode;
    }
+   poolTemp->next = nullptr;
   }
   size_t poolLength()
   {
-   if (poolHead ==NULL) return 0;
+   if (poolHead == nullptr) return 0;
 
    size_t count = 0;
    poolCurr = poolHead;
-   while (poolCurr->next != NULL)
+   while (poolCurr->next != nullptr)
      {
        poolCurr = poolCurr->next;
        count++;
@@ -96,20 +90,21 @@ template <typename X>
   void clearPool()
   {
 
-      if (poolHead == NULL)
+      if (poolHead == nullptr)
         {
           return;
         }
 
       poolCurr = poolHead;
 
-      while (poolCurr->next != NULL)
+      while (poolCurr->next != nullptr)
         {
            node* delNode = poolCurr;
             poolCurr = poolCurr->next;
              delete delNode;
         }
-
+        node* delNode = poolCurr;
+        delete delNode;
   }
 public:
   template <typename dX>
@@ -222,14 +217,14 @@ public:
 
  template <typename X>
    PSLL<X>::PSLL(){
-   head = NULL;
-   tail = NULL;
-   current = NULL;
-   temp = NULL;
-   poolHead = NULL;
-   poolTail = NULL;
-   poolCurr = NULL;
-   poolTemp = NULL;
+   head = nullptr;
+   tail = nullptr;
+   current = nullptr;
+   temp = nullptr;
+   poolHead = nullptr;
+   poolTail = nullptr;
+   poolCurr = nullptr;
+   poolTemp = nullptr;
 
  }
 
@@ -242,42 +237,46 @@ public:
    {
 
 
-      if (position == 0)
-       {
-	        push_front (ele);
-       }
-
-       else if (position == length()) push_back(ele);
-
-      else if (head != NULL)
-       {
-         node* foo;
-         size_t count = 0;
-         if(freePool())
-         {
-           foo = findNode();
-         }
-         else
-         {
-            foo = new node;
-         }
-
-         foo-> data = ele;
-	        current = head;
-          while (current->next != NULL && count != position)
+          if (position < 0 || position > length())
           {
-	           temp = current;
-	            current = current->next;
-	             count++;
+            std:: cerr << "Error position out of bounds\n";
+            return;
           }
-        temp->next = foo;
-        foo->next = current;
-       }
 
-    else
-      {
-	       std:: cout <<"Error occurred trying to INSERT\n\n";
-      }
+          if (position == 0)
+          {
+            push_front(ele);
+            return;
+          }
+          if (position == length())
+          {
+            push_back(ele);
+            return;
+          }
+
+          if (head == nullptr)
+          {
+            std:: cerr << "Error head does not exist\n";
+            return;
+          }
+
+           current = head;
+           size_t count = 0;
+
+           while (count != position)
+           {
+             temp = current;
+             current = current->next;
+             count++;
+           }
+
+           node* foo;
+            if(freePool()) foo = findNode();
+            else foo = new node;
+           foo-> data = ele;
+           foo->next = current;
+           temp->next = foo;
+
    }
 
    //-----------------------------------------------------
@@ -286,36 +285,25 @@ public:
    template <typename X>
      void PSLL<X> :: push_back(X ele)
      {
-        node* foo;
-       if(freePool())
-       {
-         foo = findNode();
-       }
-       else
-       {
-         foo = new node;
-       }
 
-       foo->data = ele;
-       foo->next = NULL;
+            if (head == nullptr)
+            {
+              node* foo = new node;
+              foo->data = ele;
+              foo->next = tail;
+              head = foo;
+              tail = foo;
+              tail->next = nullptr;
+              return;
+            }
 
-         if (head != NULL)
-         {
-           current = head;
-           while (current->next != NULL)
-           {
-             current = current->next;
-           }
-
-           current ->next = foo;
-         }
-
-         else
-         {
-           head = foo;
-           head->next = tail;
-          }
-          tail = foo;
+            node* foo;
+             if(freePool()) foo = findNode();
+             else foo = new node;
+            foo->data = ele;
+            foo->next = nullptr;
+            tail->next = foo;
+            tail = foo;
      }
 
    //-----------------------------------------------------
@@ -323,25 +311,23 @@ public:
      template <typename X>
        void PSLL<X> :: push_front(X ele)
        {
+         if (head == nullptr)
+         {
+           node* foo = new node;
+           foo->data = ele;
+           foo->next = tail;
+           head = foo;
+           tail = foo;
+           tail->next = nullptr;
+           return;
+         }
 
-         if (head != NULL)
-           {
-             node* foo;
-             if(freePool()) foo = findNode();
-             else foo = new node;
-
-             foo->data = ele;
-
-    	        foo->next = head;
-
-    	        head = foo;
-
-           }
-
-         else
-           {
-    	        push_back(ele);
-           }
+         node* foo;
+          if(freePool()) foo = findNode();
+          else foo = new node;
+         foo->data = ele;
+         foo->next = head;
+         head = foo;
 
        }
 
@@ -351,23 +337,30 @@ public:
        template<typename X>
         X PSLL<X> :: replace(X ele, size_t position)
         {
+          if (position < 0 || position > length())
+          {
+            std:: cerr << "Error position out of bounds\n";
+            return NULL;
+          }
+
+          if (head == nullptr)
+          {
+            std:: cerr << "Error head does not exist\n";
+            return NULL;
+          }
+
+          current = head;
           size_t count = 0;
-          X tempDat = NULL;
 
-           if  (head != NULL)
-            {
-           current = head;
-           while (current->next != NULL && count != position)
-               {
-                 current = current->next;
-                 count++;
-               }
-           tempDat = current->data;
-           current->data = ele;
-             }
+          while (count != position)
+          {
+            current = current->next;
+            count++;
+          }
 
-           else std::cout <<"Error occurred trying to REPLACE\n\n";
-           return tempDat;
+          X tempDat = current->data;
+          current->data = ele;
+          return tempDat;
 
         }
 
@@ -377,53 +370,36 @@ public:
         X PSLL<X>:: remove (size_t position)
            {
 
-             size_t count = 0;
-             X tempDat = NULL;
-             if (position == 0)
+             if (position < 0 || position > length())
              {
-
-               tempDat = head->data;
-               current = head;
-               if (poolHead == NULL)
-               {
-                 temp = current->next;
-                poolHead = current;
-                poolHead ->next = NULL;
-               }
-               else
-                 {
-                   temp = current->next;
-                   current->next = poolHead;
-                   poolHead = current;
-                 }
-                   head = temp;
-               return tempDat;
+               std:: cerr << "Error position out of bounds\n";
+               return NULL;
              }
 
-      else if (head != NULL)
-      {
-        	current = head;
-          while (current->next != NULL && count != position)
-            {
-        	          temp = current;
-        	           current = current->next;
-        	            count++;
-            }
+             if (head == nullptr)
+             {
+               std:: cerr << "Error head does not exist\n";
+               return NULL;
+             }
+             if (position == 0) return pop_front();
 
-        	tempDat = current->data;
-        	temp->next = current->next;
+             if (position == length() -1) return pop_back();
 
-          if (poolHead == NULL) poolHead = current;
-          else
-            {
-            current->next = poolHead;
-            poolHead = current;
+             size_t count = 0;
+             current = head;
 
-            }
-          }
-             else std:: cout << "Error, could not REMOVE\n\n";
+             while (count != position)
+             {
+               temp = current;
+               current = current->next;
+               count++;
+             }
+             X tempDat = current->data;
+              temp->next = current->next;
+             current->next = poolHead;
+             poolHead = current;
+             if (memoryWaste()) memorySaver();
              return tempDat;
-
            }
 
 
@@ -434,34 +410,22 @@ public:
     template<typename X>
       X PSLL<X>::pop_back()
       {
-        X tempDat = NULL;
-        if (head != NULL)
+        if (head == nullptr)
         {
-          current = head;
-          while (current->next != tail)
-           	{
-           	   current = current->next;
-           	 }
-
-           	tempDat = tail->data;
-
-            if (poolHead == NULL)
-            {
-               poolHead = tail;
-               poolHead->next = NULL;
-            }
-            else
-              {
-                tail->next = poolHead;
-                poolHead = tail;
-              }
-           	tail = current;
-            tail->next = NULL;
-
+          std:: cerr << "Error head does not exist\n";
+          return NULL;
         }
-          else std:: cout << "Error, could not POP_BACK\n\n";
-          return tempDat;
-
+        current = head;
+        while (current->next != tail)
+        {
+          current = current->next;
+        }
+        X tempDat = tail->data;
+        tail->next = poolHead;
+        poolHead = tail;
+        tail = current;
+        tail->next = nullptr;
+        return tempDat;
     }
 //-----------------------------------------------------
 //pop_front
@@ -469,29 +433,18 @@ public:
       template<typename X>
         X PSLL<X>:: pop_front()
         {
-          X tempDat = NULL;
+          if (head == nullptr)
+          {
+            std:: cerr << "Error head does not exist\n";
+            return NULL;
+          }
 
-          if (head != NULL)
-            {
-              tempDat = head->data;
-
-              if (poolHead == NULL)
-              {
-                poolHead = head;
-                poolHead->next = NULL;
-              }
-              else
-                {
-                  temp = current->next;
-                  head->next = poolHead;
-                  poolHead = head;
-                }
-              head = temp;
-            }
-
-          else std:: cout << "Error, could not POP_FRONT\n\n";
-
-         return tempDat;
+          X tempDat = head->data;
+          temp = head->next;
+          head->next = poolHead;
+          poolHead = head;
+          head = temp;
+          return tempDat;
        }
 
  //-----------------------------------------
@@ -500,23 +453,29 @@ public:
  template<typename X>
  X PSLL<X>::  item_at (size_t position)
  {
-   X tempDat = NULL;
-  size_t count = 0;
+   if (position < 0 || position > length())
+   {
+     std:: cerr << "Error position out of bounds\n";
+     return NULL;
+   }
 
-    if (head != NULL)
-     {
-     current = head;
+   if (head == nullptr)
+   {
+     std:: cerr << "Error head does not exist\n";
+     return NULL;
+   }
+   if (position == 0) return peek_front();
+   if (position == length() -1) return peek_back();
 
-    while (current->next != NULL && count != position)
-      {
-      current = current->next;
-      count++;
-      }
-    tempDat = current->data;
+   size_t count  = 0;
+   current = head;
+   while (count != position)
+   {
+     current = current->next;
+     count++;
+   }
 
-     }
-    else std:: cout << "Error, could not find ITEM_AT\n\n";
-    return tempDat;
+   return current->data;
 
  }
  //-----------------------------------------
@@ -541,8 +500,8 @@ public:
  template <typename X>
   bool PSLL<X>::is_empty()
   {
-    if (head!=NULL) return false;
-    else return true;
+    if (head == nullptr) return true;
+    else return false;
   }
 
 
@@ -551,7 +510,7 @@ public:
  template <typename X>
    bool PSLL<X>:: is_full()
    {
-     // List cannot be full?
+
      return false;
    }
 
@@ -560,16 +519,15 @@ public:
    template <typename X>
      size_t PSLL<X>:: length()
      {
-       if (head == NULL) return 0;
-
+       if (head == nullptr) return 0;
        size_t count = 0;
        current = head;
-       while (current->next != NULL)
-         {
-  	        current = current->next;
-  	         count++;
-         }
-         count++;
+       while (current->next != nullptr)
+       {
+          count++;
+         current = current->next;
+       }
+       count++;
        return count;
      }
 
@@ -579,24 +537,17 @@ template <typename X>
  void PSLL<X>:: clear()
  {
 
-   if (head == NULL)
-     {
-        std:: cout << "Error, cannont clear a list that does not exist\n\n";
-       return;
-     }
-
+   if (head == nullptr) return;
    current = head;
-
-   while (current->next != tail)
-     {
-        node* delNode = current;
-         current = current->next;
-          delete delNode;
-     }
-     node* delNode = tail;
-     delete delNode;
-     head = NULL;
-     clearPool();
+   while (current->next != nullptr)
+   {
+     node* delPtr = current;
+     current = current->next;
+     delete delPtr;
+   }
+   head = nullptr;
+   tail = nullptr;
+   //also need to clear pool? or add all these to pool instead?
  }
 
  //---------------------------------------------
@@ -607,14 +558,14 @@ template <typename X>
       bool final = false;
 
       current = head;
-      while (current->next != NULL)
+      while (current->next != nullptr)
       {
         if (contains(element, current->data)) final = true;
         current = current ->next;
       }
        if (contains(element, tail->data)) final = true;
 
-      return final;
+       return final;
     }
 
 //---------------------------------------------
@@ -623,20 +574,19 @@ template <typename X>
  void PSLL<X>:: print (std::ostream& stream)
  {
 
-   if (head == NULL)
+   if (head == nullptr)
      {
        stream << "<empty list>";
        return;
      }
    current = head;
    stream << "[";
-   while (current->next != NULL)
+   while (current->next != nullptr)
      {
        stream  << current->data << ",";
        current = current->next;
      }
    stream << current->data << "]";
-
 
  }
 
@@ -645,26 +595,24 @@ template <typename X>
   template <typename X>
     X* PSLL<X>:: contents()
     {
+           if (head == nullptr)
+             {
+               std::cout << "Error, list is empty\n\n";
+               return NULL;
+             }
 
-      size_t count = 0;
-      if (head == NULL)
-        {
- 	 std::cout << "Error, list is empty\n\n";
- 	 return NULL;
-        }
+             size_t count = 0;
+             X* itemArr = new X[length()];
+           current = head;
+           while (current->next != nullptr)
+             {
+               itemArr[count] = current->data;
+                count++;
+                 current = current->next;
+             }
+           itemArr[count] = current->data;
 
-       X* itemArr = new X[length()];
-      current = head;
-      while (current->next != NULL)
-        {
- 	        itemArr[count] = current->data;
- 	        count++;
- 	        current = current->next;
-        }
-      itemArr[count] = current->data;
-
-
-      return itemArr;
+           return itemArr;
     }
 
   //-------------------------------
@@ -672,7 +620,12 @@ template <typename X>
   template <typename X>
     PSLL<X>::~PSLL()
      {
-        if(head != NULL) clear();
+       clear();
+
+       delete head;
+       delete tail;
+       delete current;
+       //also delete pool?
      }
 
 

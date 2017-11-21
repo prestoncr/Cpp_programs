@@ -138,10 +138,10 @@ template <typename X>
 
  template <typename X>
    SSLL<X>::SSLL(){
-   head = NULL;
-   tail = NULL;
-   current = NULL;
-   temp = NULL;
+   head = nullptr;
+   tail = nullptr;
+   current = nullptr;
+   temp = nullptr;
 
  }
 
@@ -151,8 +151,8 @@ template <typename X>
   SSLL<X>::SSLL(const SSLL<X> &list2){
     head = list2.head;
     tail = list2.tail;
-    temp = NULL;
-    current = NULL;
+    temp = nullptr;
+    current = nullptr;
   }
 
 
@@ -163,38 +163,43 @@ template <typename X>
    void SSLL<X> :: insert(X ele, size_t position)
    {
 
+     if (position < 0 || position > length())
+     {
+       std:: cerr << "Error position out of bounds\n";
+       return;
+     }
 
-      if (position == 0)
-       {
-	        push_front (ele);
-       }
+     if (position == 0)
+     {
+       push_front(ele);
+       return;
+     }
+     if (position == length())
+     {
+       push_back(ele);
+       return;
+     }
 
-       else if (position == length()) push_back(ele);
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return;
+     }
 
+      current = head;
+      size_t count = 0;
 
-      else if (head != NULL)
-       {
-         size_t count = 0;
-         node* foo = new node;
-         foo-> data = ele;
-	        current = head;
-
-
-     while (current->next != NULL && count != position)
-       {
-	        temp = current;
-	         current = current->next;
-	          count++;
-       }
-        temp->next = foo;
-        foo->next = current;
-       }
-
-    else
+      while (count != position)
       {
-	       std:: cout <<"Error occurred trying to INSERT\n\n";
+        temp = current;
+        current = current->next;
+        count++;
       }
 
+      node* foo = new node;
+      foo-> data = ele;
+      foo->next = current;
+      temp->next = foo;
 
    }
 
@@ -207,29 +212,22 @@ template <typename X>
    void SSLL<X> :: push_back(X ele)
    {
 
+     if (head == nullptr)
+     {
+       node* foo = new node;
+       foo->data = ele;
+       foo->next = tail;
+       head = foo;
+       tail = foo;
+       tail->next = nullptr;
+       return;
+     }
+
      node* foo = new node;
      foo->data = ele;
-     foo->next = NULL;
-
-       if (head != NULL)
-	 {
-
-	   current = head;
-	   while (current->next != NULL)
-	     {
-
-	       current = current->next;
-	     }
-	   current ->next = foo;
-	 }
-
-       else
-       {
-          head = foo;
-          head -> next = tail;
-       }
+     foo->next = nullptr;
+     tail->next = foo;
      tail = foo;
-
    }
 
 
@@ -239,26 +237,23 @@ template <typename X>
  template <typename X>
    void SSLL<X> :: push_front(X ele)
    {
+     if (head == nullptr)
+     {
+       node* foo = new node;
+       foo->data = ele;
+       foo->next = tail;
+       head = foo;
+       tail = foo;
+       tail->next = nullptr;
+       return;
+     }
 
-
-     if (head != NULL)
-       {
-         node* foo = new node;
-        foo->data = ele;
-	        foo->next = head;
-	         head = foo;
-       }
-
-     else
-       {
-	       push_back(ele);
-
-       }
+     node* foo = new node;
+     foo->data = ele;
+     foo->next = head;
+     head = foo;
 
    }
-
-
-
 
  //-----------------------------------------------------
 //replace
@@ -266,27 +261,30 @@ template <typename X>
 template<typename X>
   X SSLL<X> :: replace(X ele, size_t position)
   {
+    if (position < 0 || position > length())
+    {
+      std:: cerr << "Error position out of bounds\n";
+      return NULL;
+    }
+
+    if (head == nullptr)
+    {
+      std:: cerr << "Error head does not exist\n";
+      return NULL;
+    }
+
+    current = head;
     size_t count = 0;
-    X tempDat = NULL;
 
+    while (count != position)
+    {
+      current = current->next;
+      count++;
+    }
 
-
-     if  (head != NULL)
-       {
-     current = head;
-
-     while (current->next != NULL && count != position)
-         {
-	   current = current->next;
-	   count++;
-         }
-     tempDat = current->data;
-     current->data = ele;
-
-       }
-
-     else std::cout <<"Error occurred trying to REPLACE\n\n";
-     return tempDat;
+    X tempDat = current->data;
+    current->data = ele;
+    return tempDat;
 
   }
 
@@ -295,39 +293,35 @@ template<typename X>
  template<typename X>
    X SSLL<X>:: remove (size_t position)
    {
-     size_t count =0;
-     X tempDat = NULL;
-     if (position == 0)
+     if (position < 0 || position > length())
      {
-       tempDat = head->data;
-       node* delPtr = head;
-       head= head->next;
-       delete delPtr;
-       return tempDat;
-
+       std:: cerr << "Error position out of bounds\n";
+       return NULL;
      }
 
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return NULL;
+     }
+     if (position == 0) return pop_front();
 
-      else if (head != NULL)
-       {
-	 current = head;
+     if (position == length() -1) return pop_back();
 
-        while (current->next != NULL && count != position)
-         {
-	          temp = current;
-	           current = current->next;
-	            count++;
-         }
-	        tempDat = current->data;
-          node* delPtr = current;
-          current = temp;
-          delete delPtr;
-	         temp->next = current->next;
+     size_t count = 0;
+     current = head;
 
-       }
-     else std:: cout << "Error, could not REMOVE\n\n";
+     while (count != position)
+     {
+       temp = current;
+       current = current->next;
+       count++;
+     }
+     X tempDat = current->data;
+      temp->next = current->next;
+     node* delPtr = current;
+     delete delPtr;
      return tempDat;
-
    }
 
 //-----------------------------------------------------
@@ -336,31 +330,22 @@ template<typename X>
  template<typename X>
    X SSLL<X>::pop_back()
    {
-     X tempDat = NULL;
-
-
-     if (head != NULL)
-       {
-
-	 current = head;
-	 while (current->next != tail)
-	   {
-
-	     current = current->next;
-	   }
-
-
-	 tempDat = tail->data;
-   node* delPtr = tail;
-   tail = current;
-   delete delPtr;
-
-
-
-       }
-     else std:: cout << "Error, could not POP_BACK\n\n";
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return NULL;
+     }
+     current = head;
+     while (current->next != tail)
+     {
+       current = current->next;
+     }
+     node* delPtr = tail;
+     X tempDat = tail->data;
+     tail = current;
+     tail->next = nullptr;
+     delete delPtr;
      return tempDat;
-
    }
 
 
@@ -370,20 +355,17 @@ template<typename X>
  template<typename X>
    X SSLL<X>:: pop_front()
    {
-     X tempDat = NULL;
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return NULL;
+     }
 
-     if (head != NULL)
-       {
-	 tempDat = head->data;
-   node* delPtr = head;
-	 head = head->next;
-   delete delPtr;
-
-       }
-
-     else std:: cout << "Error, could not POP_FRONT\n\n";
-
-    return tempDat;
+     X tempDat = head->data;
+     node* delPtr = head;
+     head = head->next;
+     delete delPtr;
+     return tempDat;
     }
 
 //-----------------------------------------
@@ -392,23 +374,29 @@ template<typename X>
 template<typename X>
 X SSLL<X>::  item_at (size_t position)
 {
-  X tempDat = NULL;
- size_t count = 0;
+  if (position < 0 || position > length())
+  {
+    std:: cerr << "Error position out of bounds\n";
+    return NULL;
+  }
 
-   if (head != NULL)
-    {
-    current = head;
+  if (head == nullptr)
+  {
+    std:: cerr << "Error head does not exist\n";
+    return NULL;
+  }
+  if (position == 0) return peek_front();
+  if (position == length() -1) return peek_back();
 
-   while (current->next != NULL && count != position)
-     {
-     current = current->next;
-     count++;
-     }
-   tempDat = current->data;
+  size_t count  = 0;
+  current = head;
+  while (count != position)
+  {
+    current = current->next;
+    count++;
+  }
 
-    }
-   else std:: cout << "Error, could not find ITEM_AT\n\n";
-   return tempDat;
+  return current->data;
 
 }
 
@@ -435,8 +423,8 @@ X SSLL<X>::  item_at (size_t position)
 template <typename X>
   bool SSLL<X>::is_empty()
   {
-    if (head!=NULL) return false;
-    else return true;
+    if (head == nullptr) return true;
+    else return false;
   }
 
 
@@ -445,7 +433,6 @@ template <typename X>
  template <typename X>
    bool SSLL<X>:: is_full()
    {
-     //Linked List cannot be full?
      return false;
    }
 
@@ -455,18 +442,16 @@ template <typename X>
  template <typename X>
    size_t SSLL<X>:: length()
    {
-     if (head ==NULL) return 0;
-
+     if (head == nullptr) return 0;
      size_t count = 0;
      current = head;
-     while (current->next != NULL)
-       {
-	        current = current->next;
-	         count++;
-       }
+     while (current->next != nullptr)
+     {
+        count++;
+       current = current->next;
+     }
      count++;
      return count;
-
    }
 
  //-----------------------------------------
@@ -474,25 +459,16 @@ template <typename X>
 template <typename X>
   void SSLL<X>:: clear()
   {
-
-    if (head == NULL)
-      {
-	       std:: cout << "Error, cannont clear a list that does not exist\n\n";
-        return;
-      }
-
-
+    if (head == nullptr) return;
     current = head;
-
-    while (current->next != tail)
-      {
-	       node* delNode = current;
-	        current = current->next;
-	         delete delNode;
-      }
-      node* delNode = tail;
-      delete delNode;
-      head = NULL;
+    while (current->next != nullptr)
+    {
+      node* delPtr = current;
+      current = current->next;
+      delete delPtr;
+    }
+    head = nullptr;
+    tail = nullptr;
   }
 
 
@@ -504,9 +480,8 @@ template <typename X>
      bool final = false;
 
      current = head;
-     while (current->next != NULL)
+     while (current->next != nullptr)
      {
-
        if (contains(element, current->data)) final = true;
        current = current ->next;
      }
@@ -521,21 +496,19 @@ template <typename X>
  template <typename X>
  void SSLL<X>:: print (std::ostream& stream)
  {
-
-   if (head == NULL)
+   if (head == nullptr)
      {
        stream << "<empty list>";
        return;
      }
    current = head;
    stream << "[";
-   while (current->next != NULL)
+   while (current->next != nullptr)
      {
        stream  << current->data << ",";
        current = current->next;
      }
    stream << current->data << "]";
-
 
  }
 
@@ -545,33 +518,37 @@ template <typename X>
    X* SSLL<X>:: contents()
    {
 
-     size_t count = 0;
-     if (head == NULL)
+     if (head == nullptr)
        {
-	 std::cout << "Error, list is empty\n\n";
-	 return NULL;
+         std::cout << "Error, list is empty\n\n";
+         return NULL;
        }
 
-     X* itemArr = new X[length()];
+       size_t count = 0;
+       X* itemArr = new X[length()];
      current = head;
-     while (current->next != NULL)
+     while (current->next != nullptr)
        {
-	        itemArr[count] = current->data;
-	         count++;
-	          current = current->next;
+         itemArr[count] = current->data;
+          count++;
+           current = current->next;
        }
      itemArr[count] = current->data;
 
      return itemArr;
-
-
    }
  //-------------------------------
  //Destructor
  template <typename X>
    SSLL<X>::~SSLL()
     {
-       if(head != NULL) clear();
+      clear();
+
+      delete head;  
+      delete tail;
+      delete current;
+
+
 
     }
 

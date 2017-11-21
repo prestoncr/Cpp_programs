@@ -199,7 +199,7 @@ public:
 {
   if (is_full()) resizeArray(); //recopy array
 
-     for (int i = length(); i > position; i--)
+     for (size_t i = length(); i > position; i--)
       {
         array[i] = array[i-1];
       }
@@ -216,7 +216,7 @@ public:
    void SDAL<X> :: push_back(X ele)
    {
      if (is_full())resizeArray(); // recopy array
-      array[length()] = ele;
+      array[tail] = ele;
       tail++;
    }
 
@@ -229,7 +229,7 @@ public:
 {
      if (is_full())resizeArray(); //recopy array
 
-        for (int i = length(); i > 0; i--)
+        for (size_t i = length(); i > 0; i--)
          {
            array[i] = array[i-1];
          }
@@ -255,7 +255,7 @@ template<typename X>
    {
      X tempDat = array[position];
 
-     for (int i = position; i < length(); i++)
+     for (size_t i = position; i < length(); i++)
      {
        array[i] = array[i+1];
      }
@@ -286,7 +286,7 @@ template<typename X>
    X SDAL<X>:: pop_front()
    {
      X tempDat = array[0];
-     for (int i = 0; i < length(); i++)
+     for (size_t i = 0; i < length(); i++)
      {
        array[i] = array[i+1];
      }
@@ -301,7 +301,7 @@ template<typename X>
 template<typename X>
 X SDAL<X>::  item_at (size_t position)
 {
-return array[position];
+  return array[position];
 }
 
  //-----------------------------------------
@@ -416,7 +416,6 @@ template <typename X>
    SDAL<X>::~SDAL()
     {
       delete array;
-
     }
 
 //===========================================
