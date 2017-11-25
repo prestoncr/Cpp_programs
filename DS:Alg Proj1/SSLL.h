@@ -23,7 +23,7 @@ template <typename X>
    node* temp;
    node* current;
    node* tail;
-
+   X nothing = NULL;
 
   public:
     template <typename dX>
@@ -100,9 +100,9 @@ template <typename X>
   X remove (size_t position)override;
   X pop_back()override;
     X pop_front()override;
-  X item_at (size_t position)override;
-  X peek_back()override;
-  X peek_front()override;
+  X& item_at (size_t position)override;
+  X& peek_back()override;
+  X& peek_front()override;
   bool is_empty()override;
   bool is_full()override;
   size_t length()override;
@@ -372,18 +372,18 @@ template<typename X>
 //item_at
 
 template<typename X>
-X SSLL<X>::  item_at (size_t position)
+X& SSLL<X>::  item_at (size_t position)
 {
   if (position < 0 || position > length())
   {
     std:: cerr << "Error position out of bounds\n";
-    return NULL;
+    return nothing;
   }
 
   if (head == nullptr)
   {
     std:: cerr << "Error head does not exist\n";
-    return NULL;
+    return nothing;
   }
   if (position == 0) return peek_front();
   if (position == length() -1) return peek_back();
@@ -404,16 +404,28 @@ X SSLL<X>::  item_at (size_t position)
  //-----------------------------------------
 //peek_back
  template <typename X>
-   X SSLL<X>:: peek_back()
+   X& SSLL<X>:: peek_back()
    {
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return nothing;
+     }
+
      return tail->data;
    }
 
  //-----------------------------------------
 //peek_front
  template <typename X>
-   X SSLL<X>:: peek_front()
+   X& SSLL<X>:: peek_front()
    {
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return nothing;
+     }
+
      return head->data;
    }
 
@@ -477,6 +489,12 @@ template <typename X>
  template<typename X>
    bool SSLL<X>::  contains(X element, std::function<bool (X,X)> contains)
    {
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return nothing;
+     }
+     
      bool final = false;
 
      current = head;
@@ -544,7 +562,7 @@ template <typename X>
     {
       clear();
 
-      delete head;  
+      delete head;
       delete tail;
       delete current;
 

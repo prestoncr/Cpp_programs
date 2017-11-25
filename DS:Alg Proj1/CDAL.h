@@ -26,7 +26,7 @@ template <typename X>
     node* current;
     node* tailNode;
     size_t tail = 0;
-
+    X nothing = NULL;
     void newArray()
     {
       for (size_t i = 0; i < 50; i++)
@@ -116,9 +116,9 @@ template <typename X>
   X remove (size_t position)override;
   X pop_back()override;
     X pop_front()override;
-  X item_at (size_t position)override;
-  X peek_back()override;
-  X peek_front()override;
+  X& item_at (size_t position)override;
+  X& peek_back()override;
+  X& peek_front()override;
   bool is_empty()override;
   bool is_full()override;
   size_t length()override;
@@ -168,6 +168,11 @@ template <typename X>
    void CDAL<X> :: insert(X ele, size_t position)
 {
 
+  if (position < 0 || position > tail)
+  {
+    std:: cerr << "Position out of bounds";
+    return;
+  }
 
 
 //if list does not exist
@@ -362,6 +367,16 @@ else
 template<typename X>
   X CDAL<X> :: replace(X ele, size_t position)
   {
+    if (position < 0 || position > tail)
+    {
+      std:: cerr << "Position out of bounds";
+      return;
+    }
+    if (is_empty())
+    {
+      std:: cerr << "Error List is empty\n";
+      return nothing;
+    }
     X tempEle;
     if (headNode==NULL)
     {
@@ -383,6 +398,16 @@ template<typename X>
  template<typename X>
    X CDAL<X>:: remove (size_t position)
    {
+     if (position < 0 || position > tail)
+     {
+       std:: cerr << "Position out of bounds";
+       return;
+     }
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      if (headNode == NULL)
      {
        std:: cout << "Error cannot remove from an empty list\n";
@@ -433,6 +458,11 @@ template<typename X>
  template<typename X>
    X CDAL<X>::pop_back()
    {
+   if (is_empty())
+   {
+     std:: cerr << "Error List is empty\n";
+     return nothing;
+   }
      if (headNode == NULL)
      {
        std:: cout << "Error cannot pop, empty list\n";
@@ -467,12 +497,22 @@ template<typename X>
 //item_at
 
 template<typename X>
-X CDAL<X>::  item_at (size_t position)
+X& CDAL<X>::  item_at (size_t position)
 {
+  if (position < 0 || position > tail)
+  {
+    std:: cerr << "Position out of bounds";
+    return;
+  }
+  if (is_empty())
+  {
+    std:: cerr << "Error List is empty\n";
+    return nothing;
+  }
   if (headNode == NULL)
   {
     std:: cout << "Error cannot get item in empty list\n";
-    return NULL;
+    return nothing;
   }
   size_t nodeNum = position/50;
   current = headNode;
@@ -485,12 +525,12 @@ X CDAL<X>::  item_at (size_t position)
  //-----------------------------------------
 //peek_back
  template <typename X>
-   X CDAL<X>:: peek_back()
+   X& CDAL<X>:: peek_back()
    {
      if (headNode == NULL)
      {
        std:: cout << "Error cannot peek, empty list\n";
-       return NULL;
+       return nothing;
      }
 
      size_t count = 0;
@@ -512,12 +552,12 @@ X CDAL<X>::  item_at (size_t position)
  //-----------------------------------------
 //peek_front
  template <typename X>
-   X CDAL<X>:: peek_front()
+   X& CDAL<X>:: peek_front()
    {
      if (headNode == NULL)
      {
        std:: cout << "Error cannot peek, empty list";
-       return NULL;
+       return nothing;
      }
      return headNode->data[0];
    }
@@ -626,11 +666,7 @@ template <typename X>
  template <typename X>
    X* CDAL<X>:: contents()
    {
-     if (is_empty())
-     {
-       std:: cout << "Error, empty list\n";
-       return NULL;
-     }
+  
       X* tmpArr = new X[length()];
      size_t nextele = 0;
      current = headNode;

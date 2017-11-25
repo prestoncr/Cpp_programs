@@ -29,6 +29,7 @@ template <typename X>
    node* poolTail;
    node* poolCurr;
    node* poolTemp;
+   X nothing = NULL;
 
 
   bool freePool()
@@ -181,9 +182,9 @@ public:
   X remove (size_t position)override;
   X pop_back()override;
     X pop_front()override;
-  X item_at (size_t position)override;
-  X peek_back()override;
-  X peek_front()override;
+  X& item_at (size_t position)override;
+  X& peek_back()override;
+  X& peek_front()override;
   bool is_empty()override;
   bool is_full()override;
   size_t length()override;
@@ -235,7 +236,6 @@ public:
  template <typename X>
    void PSLL<X> :: insert(X ele, size_t position)
    {
-
 
           if (position < 0 || position > length())
           {
@@ -451,18 +451,18 @@ public:
  //item_at
 
  template<typename X>
- X PSLL<X>::  item_at (size_t position)
+ X& PSLL<X>::  item_at (size_t position)
  {
    if (position < 0 || position > length())
    {
      std:: cerr << "Error position out of bounds\n";
-     return NULL;
+     return nothing;
    }
 
    if (head == nullptr)
    {
      std:: cerr << "Error head does not exist\n";
-     return NULL;
+     return nothing;
    }
    if (position == 0) return peek_front();
    if (position == length() -1) return peek_back();
@@ -481,16 +481,28 @@ public:
  //-----------------------------------------
  //peek_back
  template <typename X>
-   X PSLL<X>:: peek_back()
+   X& PSLL<X>:: peek_back()
    {
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return nothing;
+     }
+
      return tail->data;
    }
 
  //-----------------------------------------
  //peek_front
  template <typename X>
-   X PSLL<X>:: peek_front()
+   X& PSLL<X>:: peek_front()
    {
+     if (head == nullptr)
+     {
+       std:: cerr << "Error head does not exist\n";
+       return nothing;
+     }
+
      return head->data;
    }
 
@@ -510,7 +522,6 @@ public:
  template <typename X>
    bool PSLL<X>:: is_full()
    {
-
      return false;
    }
 
@@ -555,6 +566,11 @@ template <typename X>
   template<typename X>
     bool PSLL<X>::  contains(X element, std::function<bool (X,X)> contains)
     {
+      if (head == nullptr)
+      {
+        std:: cerr << "Error head does not exist\n";
+        return nothing;
+      }
       bool final = false;
 
       current = head;

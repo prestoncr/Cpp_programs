@@ -20,6 +20,7 @@ template <typename X>
     X *newArray;
     size_t og_size;
     size_t tail = 0;
+    X nothing = NULL;
 
     bool is_small()
     {
@@ -113,9 +114,7 @@ public:
     }
     here = NULL;
     return *this;
-    //temporarily fixed I guess ! :))
-    //has to return end somehow
-    //must fix this to not get Illegal Instruction 4
+
     } // preincrement
 
     self_type operator++(int) {
@@ -143,9 +142,9 @@ public:
   X remove (size_t position)override;
   X pop_back()override;
     X pop_front()override;
-  X item_at (size_t position)override;
-  X peek_back()override;
-  X peek_front()override;
+  X& item_at (size_t position)override;
+  X& peek_back()override;
+  X& peek_front()override;
   bool is_empty()override;
   bool is_full()override;
   size_t length()override;
@@ -199,6 +198,12 @@ public:
 {
   if (is_full()) resizeArray(); //recopy array
 
+      if (position < 0 || position > tail)
+      {
+        std:: cerr << "Position out of bounds";
+        return;
+      }
+
      for (size_t i = length(); i > position; i--)
       {
         array[i] = array[i-1];
@@ -215,6 +220,11 @@ public:
  template <typename X>
    void SDAL<X> :: push_back(X ele)
    {
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      if (is_full())resizeArray(); // recopy array
       array[tail] = ele;
       tail++;
@@ -227,6 +237,12 @@ public:
  template <typename X>
    void SDAL<X> :: push_front(X ele)
 {
+
+  if (is_empty())
+  {
+    std:: cerr << "Error List is empty\n";
+    return nothing;
+  }
      if (is_full())resizeArray(); //recopy array
 
         for (size_t i = length(); i > 0; i--)
@@ -243,6 +259,16 @@ public:
 template<typename X>
   X SDAL<X> :: replace(X ele, size_t position)
   {
+    if (position < 0 || position > tail)
+    {
+      std:: cerr << "Position out of bounds";
+      return;
+    }
+    if (is_empty())
+    {
+      std:: cerr << "Error List is empty\n";
+      return nothing;
+    }
     X tempDat = array[position];
     array[position] = ele;
     return tempDat;
@@ -253,6 +279,16 @@ template<typename X>
  template<typename X>
    X SDAL<X>:: remove (size_t position)
    {
+     if (position < 0 || position > tail)
+     {
+       std:: cerr << "Position out of bounds";
+       return;
+     }
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      X tempDat = array[position];
 
      for (size_t i = position; i < length(); i++)
@@ -271,6 +307,12 @@ template<typename X>
  template<typename X>
    X SDAL<X>::pop_back()
    {
+
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      X tempDat = array[length()-1];
      array[length() -1] = NULL;
      tail--;
@@ -285,6 +327,12 @@ template<typename X>
  template<typename X>
    X SDAL<X>:: pop_front()
    {
+
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      X tempDat = array[0];
      for (size_t i = 0; i < length(); i++)
      {
@@ -299,24 +347,46 @@ template<typename X>
 //item_at
 
 template<typename X>
-X SDAL<X>::  item_at (size_t position)
+X& SDAL<X>::  item_at (size_t position)
 {
+  if (position < 0 || position > tail)
+  {
+    std:: cerr << "Position out of bounds";
+    return;
+  }
+  if (is_empty())
+  {
+    std:: cerr << "Error List is empty\n";
+    return nothing;
+  }
   return array[position];
 }
 
  //-----------------------------------------
 //peek_back
  template <typename X>
-   X SDAL<X>:: peek_back()
+   X& SDAL<X>:: peek_back()
    {
+
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      return array[length()-1];
    }
 
  //-----------------------------------------
 //peek_front
  template <typename X>
-   X SDAL<X>:: peek_front()
+   X& SDAL<X>:: peek_front()
    {
+
+     if (is_empty())
+     {
+       std:: cerr << "Error List is empty\n";
+       return nothing;
+     }
      return array[0];
    }
 

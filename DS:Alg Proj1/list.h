@@ -22,9 +22,9 @@ template <typename X>
   virtual X remove (size_t position) = 0;
   virtual X pop_back() = 0;
   virtual X pop_front() = 0;
-  virtual X item_at (size_t position) = 0;
-  virtual X peek_back() = 0;
-  virtual X peek_front() = 0;
+  virtual X& item_at (size_t position) = 0;
+  virtual X& peek_back() = 0;
+  virtual X& peek_front() = 0;
   virtual bool is_empty() = 0;
   virtual bool is_full() = 0;
   virtual size_t length() = 0;

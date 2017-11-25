@@ -20,6 +20,7 @@ template <typename X>
     X *newArray;
     size_t head = 0;
     size_t tail = 0;
+    X nothing = NULL;
 
     void makeArray(size_t size)
     {
@@ -130,9 +131,9 @@ public:
   X remove (size_t position)override;
   X pop_back()override;
     X pop_front()override;
-  X item_at (size_t position)override;
-  X peek_back()override;
-  X peek_front()override;
+  X& item_at (size_t position)override;
+  X& peek_back()override;
+  X& peek_front()override;
   bool is_empty()override;
   bool is_full()override;
   size_t length()override;
@@ -181,7 +182,12 @@ public:
  template <typename X>
    void CBL<X> :: insert(X ele, size_t position)
 {
-  if (is_full()) resizeArray(); //recopy array
+    if (is_full()) resizeArray(); //recopy array
+    if (position < 0 || position > length())
+    {
+      std:: cerr << "Position out of bounds\n";
+      return;
+    }
 
     size_t curr = head;
     for (int i = 0; i < position; i++)
@@ -248,6 +254,11 @@ public:
 template<typename X>
   X CBL<X> :: replace(X ele, size_t position)
   {
+    if (position < 0 || position > length())
+    {
+      std:: cerr << "Position out of bounds\n";
+      return;
+    }
     size_t curr = head;
     for (int i = 0; i < position; i++)
     {
@@ -265,6 +276,11 @@ template<typename X>
  template<typename X>
    X CBL<X>:: remove (size_t position)
    {
+     if (position < 0 || position > length())
+     {
+       std:: cerr << "Position out of bounds\n";
+       return;
+     }
      size_t curr = head;
      for (int i = 0; i < position; i++)
      {
@@ -298,6 +314,11 @@ template<typename X>
  template<typename X>
    X CBL<X>::pop_back()
    {
+     if (is_empty())
+     {
+       std:: cerr << "Error, list is empty\n";
+       return nothing;
+     }
      if (tail == 0) tail = arr_size;
      X tempDat = array[tail-1];
      array[tail-1] = NULL;
@@ -312,6 +333,11 @@ template<typename X>
  template<typename X>
    X CBL<X>:: pop_front()
    {
+     if (is_empty())
+     {
+       std:: cerr << "Error, list is empty\n";
+       return nothing;
+     }
      X tempDat = array[head];
      array[head] = NULL;
      if (head == arr_size-1) head = 0;
@@ -324,8 +350,20 @@ template<typename X>
 //item_at
 
 template<typename X>
-X CBL<X>::  item_at (size_t position)
+X& CBL<X>::  item_at (size_t position)
 {
+  if (is_empty())
+  {
+    std:: cerr << "Error, list is empty\n";
+    return nothing;
+  }
+
+  if (position < 0 || position > length())
+  {
+    std:: cerr << "Position out of bounds\n";
+    return;
+  }
+
   size_t curr = head;
   for (int i = 0; i < position; i++)
   {
@@ -339,8 +377,13 @@ return array[curr];
  //-----------------------------------------
 //peek_back
  template <typename X>
-   X CBL<X>:: peek_back()
+   X& CBL<X>:: peek_back()
    {
+     if (is_empty())
+     {
+       std:: cerr << "Error, list is empty\n";
+       return nothing;
+     }
 
     if (tail-1 == -1) return array[arr_size-1];
     else return array[tail-1];
@@ -350,8 +393,13 @@ return array[curr];
  //-----------------------------------------
 //peek_front
  template <typename X>
-   X CBL<X>:: peek_front()
+   X& CBL<X>:: peek_front()
    {
+     if (is_empty())
+     {
+       std:: cerr << "Error, list is empty\n";
+       return nothing;
+     }
      return array[head];
    }
 
@@ -387,6 +435,7 @@ template <typename X>
  template <typename X>
    size_t CBL<X>:: length()
    {
+
      size_t curr = head;
      size_t counter = 0;
      while (curr != tail)
@@ -416,6 +465,11 @@ template <typename X>
  template<typename X>
    bool CBL<X>::  contains(X element, std::function<bool (X,X)> contains)
    {
+     if (is_empty())
+     {
+       std:: cerr << "Error, list is empty\n";
+       return nothing;
+     }
      bool final = false;
      size_t curr = head;
 
