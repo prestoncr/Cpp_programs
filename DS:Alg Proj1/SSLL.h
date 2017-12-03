@@ -149,10 +149,19 @@ template <typename X>
 //Copy Constructor
 template <typename X>
   SSLL<X>::SSLL(const SSLL<X> &list2){
-    head = list2.head;
-    tail = list2.tail;
-    temp = nullptr;
-    current = nullptr;
+    head->data = list2.head->data;
+    node* other = list2.head->next;
+    current = head;
+    while (other != list2.tail)
+    {
+      node* foo = new node;
+      current->next = foo;
+      foo->data = other->data;
+      current = current->next;
+      other = other->next;
+    }
+
+
   }
 
 
@@ -335,17 +344,27 @@ template<typename X>
        std:: cerr << "Error head does not exist\n";
        return NULL;
      }
+     if (head == tail )
+     {
+       X tempDat = head->data;
+       head = nullptr;
+       tail = nullptr;
+       return tempDat;
+     }
      current = head;
      while (current->next != tail)
      {
        current = current->next;
      }
+
+
      node* delPtr = tail;
      X tempDat = tail->data;
      tail = current;
      tail->next = nullptr;
      delete delPtr;
      return tempDat;
+
    }
 
 
@@ -454,15 +473,17 @@ template <typename X>
  template <typename X>
    size_t SSLL<X>:: length()
    {
-     if (head == nullptr) return 0;
      size_t count = 0;
+
+     if (head == nullptr) return 0;
+     else count++;
      current = head;
+
      while (current->next != nullptr)
      {
         count++;
        current = current->next;
      }
-     count++;
      return count;
    }
 
@@ -494,7 +515,7 @@ template <typename X>
        std:: cerr << "Error head does not exist\n";
        return nothing;
      }
-     
+
      bool final = false;
 
      current = head;
@@ -560,14 +581,11 @@ template <typename X>
  template <typename X>
    SSLL<X>::~SSLL()
     {
-      clear();
 
+      clear();
       delete head;
       delete tail;
       delete current;
-
-
-
     }
 
 //===========================================

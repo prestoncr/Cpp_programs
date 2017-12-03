@@ -46,14 +46,14 @@ template <typename X>
     void makeArray(size_t size)
     {
       this->array = new X [size];
-      for (int i = 0; i < size; i++) array[i] = NULL;
+      for (int i = 0; i < size; i++) array[i] = nothing;
     }
     void resizeArray()
     {
       size_t size = arr_size*(1.5);
 
       this->newArray = new X [size];
-      for (int i = 0; i < size; i++) newArray[i] = NULL;
+      for (int i = 0; i < size; i++) newArray[i] = nothing;
 
       for (int i = 0; i < arr_size; i++)
       {
@@ -220,11 +220,6 @@ public:
  template <typename X>
    void SDAL<X> :: push_back(X ele)
    {
-     if (is_empty())
-     {
-       std:: cerr << "Error List is empty\n";
-       return nothing;
-     }
      if (is_full())resizeArray(); // recopy array
       array[tail] = ele;
       tail++;
@@ -238,11 +233,6 @@ public:
    void SDAL<X> :: push_front(X ele)
 {
 
-  if (is_empty())
-  {
-    std:: cerr << "Error List is empty\n";
-    return nothing;
-  }
      if (is_full())resizeArray(); //recopy array
 
         for (size_t i = length(); i > 0; i--)
@@ -262,7 +252,7 @@ template<typename X>
     if (position < 0 || position > tail)
     {
       std:: cerr << "Position out of bounds";
-      return;
+      return nothing;
     }
     if (is_empty())
     {
@@ -282,7 +272,7 @@ template<typename X>
      if (position < 0 || position > tail)
      {
        std:: cerr << "Position out of bounds";
-       return;
+       return nothing;
      }
      if (is_empty())
      {
@@ -352,7 +342,7 @@ X& SDAL<X>::  item_at (size_t position)
   if (position < 0 || position > tail)
   {
     std:: cerr << "Position out of bounds";
-    return;
+    return nothing;
   }
   if (is_empty())
   {
@@ -396,7 +386,7 @@ X& SDAL<X>::  item_at (size_t position)
 template <typename X>
   bool SDAL<X>::is_empty()
   {
-    if (array[0] == NULL) return true;
+    if (length() == 0) return true;
     else return false;
   }
 
@@ -416,7 +406,6 @@ template <typename X>
  template <typename X>
    size_t SDAL<X>:: length()
    {
-
      return tail;
    }
 

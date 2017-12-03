@@ -17,7 +17,7 @@ int main()
       //Replace the List Implementation Type to any of the five
       //and everything will work exactly the same
 
-  		cop3530::List<char> * list  = new cop3530::CDAL<char>();
+  		cop3530::List<char> * list  = new cop3530::SSLL<char>();
 
       list->push_back('A');
 
@@ -47,17 +47,14 @@ int main()
         std:: cout << "\n===========================================\n";
 
   			char first = list->remove(0);
-
         char last = list->remove(list->length()-1);
         char mid = list->remove(list->length()/2);
-
 
   				if (first != 'Q') std:: cout << "TEST FAILED Line 47\n";
           if(last != 'D')std:: cout << "TEST FAILED Line 48\n";
           if(mid != '&')std:: cout << "TEST FAILED Line 49\n";
 
   			char poppyFront = list->pop_front();
-
         char poppyBack = list->pop_back();
 
           if(poppyFront != 'W') std:: cout << "TEST FAILED Line 53\n";
@@ -111,7 +108,7 @@ int main()
 
 
         std:: cout << "\n\nINT LIST\n\n";
-  		cop3530::List<int> * list2 = new cop3530::CDAL<int>();
+  		cop3530::List<int> * list2 = new cop3530::SSLL<int>();
 
   		for(int i = 0; i < 142; i++)
   			list2->push_back(i);
@@ -147,9 +144,11 @@ int main()
               }
              }
 
-
-
-  		delete list2;
+             for(int i = 0; i < 141; i++)
+             {
+         			list2->pop_back();
+              }
+              if (!list2->is_empty()) std::cout<<"TEST FAILED LINE 152\n";
 
       std:: cout <<"All Tests are complete, hopefully they all passed too :) \n\n";
 

@@ -370,7 +370,7 @@ template<typename X>
     if (position < 0 || position > tail)
     {
       std:: cerr << "Position out of bounds";
-      return;
+      return nothing;
     }
     if (is_empty())
     {
@@ -401,7 +401,7 @@ template<typename X>
      if (position < 0 || position > tail)
      {
        std:: cerr << "Position out of bounds";
-       return;
+       return nothing;
      }
      if (is_empty())
      {
@@ -502,7 +502,7 @@ X& CDAL<X>::  item_at (size_t position)
   if (position < 0 || position > tail)
   {
     std:: cerr << "Position out of bounds";
-    return;
+    return nothing;
   }
   if (is_empty())
   {
@@ -568,7 +568,9 @@ X& CDAL<X>::  item_at (size_t position)
 template <typename X>
   bool CDAL<X>::is_empty()
   {
+
     if (headNode == NULL) return true;
+    else if (length() == 0) return true;
     else return false;
   }
 
@@ -666,7 +668,7 @@ template <typename X>
  template <typename X>
    X* CDAL<X>:: contents()
    {
-  
+
       X* tmpArr = new X[length()];
      size_t nextele = 0;
      current = headNode;

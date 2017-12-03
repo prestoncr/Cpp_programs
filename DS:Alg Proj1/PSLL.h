@@ -415,6 +415,10 @@ public:
           std:: cerr << "Error head does not exist\n";
           return NULL;
         }
+        if (length() == 1)
+        {
+          return pop_front();
+        }
         current = head;
         while (current->next != tail)
         {
@@ -440,10 +444,15 @@ public:
           }
 
           X tempDat = head->data;
+
           temp = head->next;
+
           head->next = poolHead;
+
           poolHead = head;
+
           head = temp;
+
           return tempDat;
        }
 

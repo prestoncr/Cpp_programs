@@ -257,7 +257,7 @@ template<typename X>
     if (position < 0 || position > length())
     {
       std:: cerr << "Position out of bounds\n";
-      return;
+      return nothing;
     }
     size_t curr = head;
     for (int i = 0; i < position; i++)
@@ -279,7 +279,7 @@ template<typename X>
      if (position < 0 || position > length())
      {
        std:: cerr << "Position out of bounds\n";
-       return;
+       return nothing;
      }
      size_t curr = head;
      for (int i = 0; i < position; i++)
@@ -361,7 +361,7 @@ X& CBL<X>::  item_at (size_t position)
   if (position < 0 || position > length())
   {
     std:: cerr << "Position out of bounds\n";
-    return;
+    return nothing;
   }
 
   size_t curr = head;
