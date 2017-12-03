@@ -1,0 +1,10 @@
+Crypto Project Notes
+=======================
+
+Things to get done
+-----------------
+Need to code 3 .h files and one .cpp file
+  header files - Vernam Cipher, Disrupted Transposition, Straddling checkerboard
+  cpp file - Vic Cipher.cpp that runs all the header files to make Vic Cipher
+Need to investigate PRNG used in Vernam cipher portion
+Need to come up with a general history report 
