@@ -1,2 +1,2 @@
 # preston-programming
-Preston's Private Repo
+a few of the C++ projects I completed during my studies.
